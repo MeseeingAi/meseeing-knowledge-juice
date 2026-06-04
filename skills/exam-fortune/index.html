@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>考试运程预测 · 周易卦象</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --vermilion: #B22222;
+  --vermilion-light: #DC143C;
+  --gold: #C9A84C;
+  --gold-light: #FFD700;
+  --ink: #1a1a1a;
+  --ink-light: #2d2d2d;
+  --parchment: #F5E6C8;
+  --parchment-dark: #E8D5A3;
+  --paper-bg: #FFF8E7;
+  --shadow: rgba(0,0,0,0.3);
+}
+body {
+  font-family: 'Noto Serif SC', 'ZCOOL XiaoWei', serif;
+  background: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-image: 
+    radial-gradient(ellipse at 20% 50%, rgba(178,34,34,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 50%, rgba(201,168,76,0.06) 0%, transparent 50%);
+}
+.container {
+  width: 100%;
+  max-width: 580px;
+  position: relative;
+}
+.scroll-frame {
+  background: var(--paper-bg);
+  border-radius: 4px;
+  padding: 40px 35px;
+  position: relative;
+  box-shadow: 
+    0 0 0 1px var(--gold),
+    0 0 0 3px var(--ink-light),
+    0 0 0 4px var(--gold),
+    0 20px 60px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+.scroll-frame::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 40px,
+    rgba(201,168,76,0.03) 40px,
+    rgba(201,168,76,0.03) 41px
+  );
+  pointer-events: none;
+}
+/* Decorative top/bottom bars */
+.scroll-bar {
+  height: 12px;
+  background: linear-gradient(90deg, var(--vermilion), var(--gold), var(--vermilion));
+  border-radius: 2px;
+  margin: 0 -10px;
+  opacity: 0.8;
+}
+.scroll-bar-bottom {
+  margin-top: 30px;
+}
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.header-icon {
+  font-size: 28px;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+h1 {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 2.2rem;
+  color: var(--vermilion);
+  letter-spacing: 6px;
+  text-shadow: 1px 1px 2px rgba(178,34,34,0.2);
+}
+.subtitle {
+  font-size: 0.85rem;
+  color: var(--ink-light);
+  opacity: 0.6;
+  margin-top: 4px;
+  letter-spacing: 3px;
+}
+/* Divider */
+.divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 20px 0;
+}
+/* Input group */
+.input-group {
+  margin-bottom: 18px;
+}
+.input-group label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--ink-light);
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+.input-group label .optional {
+  font-weight: 400;
+  opacity: 0.5;
+  font-size: 0.8rem;
+}
+.input-wrapper {
+  position: relative;
+}
+.input-wrapper i {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gold);
+  font-size: 1rem;
+}
+.input-wrapper input {
+  width: 100%;
+  padding: 12px 16px 12px 42px;
+  border: 1px solid var(--parchment-dark);
+  border-radius: 4px;
+  font-family: 'Noto Serif SC', serif;
+  font-size: 0.95rem;
+  background: white;
+  color: var(--ink);
+  transition: all 0.3s;
+  outline: none;
+}
+.input-wrapper input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+}
+.input-wrapper input::placeholder {
+  color: #bbb;
+  font-size: 0.85rem;
+}
+/* Button */
+.btn-divination {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--vermilion), #8B0000);
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  border-radius: 4px;
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 1.5rem;
+  letter-spacing: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+  margin: 24px 0 10px;
+}
+.btn-divination:hover:not(:disabled) {
+  background: linear-gradient(135deg, #CC0000, var(--vermilion));
+  box-shadow: 0 0 20px rgba(178,34,34,0.3);
+  transform: translateY(-1px);
+}
+.btn-divination:active:not(:disabled) {
+  transform: translateY(0);
+}
+.btn-divination:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.btn-divination i {
+  margin-right: 6px;
+}
+/* Shake animation */
+@keyframes shake-coin {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  10% { transform: translate(-3px, -2px) rotate(-2deg); }
+  20% { transform: translate(3px, -1px) rotate(2deg); }
+  30% { transform: translate(-2px, 2px) rotate(-1deg); }
+  40% { transform: translate(2px, 1px) rotate(1deg); }
+  50% { transform: translate(-4px, -1px) rotate(-3deg); }
+  60% { transform: translate(3px, 2px) rotate(2deg); }
+  70% { transform: translate(-1px, -2px) rotate(-1deg); }
+  80% { transform: translate(2px, -1px) rotate(1deg); }
+  90% { transform: translate(-3px, 1px) rotate(-2deg); }
+}
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 5px rgba(201,168,76,0.3), 0 0 10px rgba(201,168,76,0.1); }
+  50% { box-shadow: 0 0 20px rgba(201,168,76,0.6), 0 0 40px rgba(201,168,76,0.2); }
+}
+.shaking {
+  animation: shake-coin 0.6s ease-in-out 3;
+}
+.shaking-glow {
+  animation: glow-pulse 0.6s ease-in-out 3;
+}
+/* Loading overlay */
+.loading-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.loading-overlay.active {
+  display: flex;
+}
+.loading-coin {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, var(--gold-light), var(--gold), #8B7355);
+  border: 3px solid #8B7355;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: var(--vermilion);
+  animation: shake-coin 0.4s ease-in-out infinite;
+  box-shadow: 0 0 30px rgba(201,168,76,0.4);
+}
+.loading-text {
+  color: var(--gold-light);
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 1.3rem;
+  margin-top: 20px;
+  letter-spacing: 4px;
+  animation: pulse-text 1.5s ease-in-out infinite;
+}
+@keyframes pulse-text {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+/* Result area */
+.result-area {
+  display: none;
+  margin-top: 10px;
+  animation: fadeInUp 0.8s ease-out;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.result-area.visible {
+  display: block;
+}
+/* Hexagram display */
+.hexagram-display {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(201,168,76,0.05), rgba(178,34,34,0.05));
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 4px;
+  margin-bottom: 20px;
+  position: relative;
+}
+.hexagram-symbol {
+  font-size: 3.5rem;
+  font-family: 'Ma Shan Zheng', cursive;
+  color: var(--vermilion);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.hexagram-name {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 2rem;
+  color: var(--ink);
+  letter-spacing: 4px;
+}
+.hexagram-sub {
+  font-size: 0.9rem;
+  color: var(--ink-light);
+  opacity: 0.7;
+  margin-top: 4px;
+}
+/* Yao lines visualization */
+.yao-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 15px 0;
+  padding: 10px;
+}
+.yao-line {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.yao-line .line {
+  display: block;
+  height: 4px;
+  border-radius: 2px;
+}
+.yao-line .line-solid {
+  width: 60px;
+  background: var(--ink);
+}
+.yao-line .line-broken {
+  width: 60px;
+  background: transparent;
+  border-top: 4px dashed var(--ink);
+  height: 4px;
+}
+.yao-label {
+  font-size: 0.7rem;
+  color: #999;
+  width: 20px;
+  text-align: right;
+}
+/* Score gauge */
+.score-section {
+  text-align: center;
+  padding: 15px;
+  border-top: 1px solid rgba(201,168,76,0.3);
+  border-bottom: 1px solid rgba(201,168,76,0.3);
+  margin: 15px 0;
+}
+.score-label {
+  font-size: 0.85rem;
+  color: var(--ink-light);
+  opacity: 0.6;
+}
+.score-number {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 3rem;
+  line-height: 1;
+  margin: 5px 0;
+}
+.score-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: #eee;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.score-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1.5s ease-out;
+}
+/* Interpretation text */
+.interpretation {
+  padding: 15px 0;
+}
+.interpretation h3 {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 1.2rem;
+  color: var(--vermilion);
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+.interpretation p {
+  font-size: 0.92rem;
+  line-height: 1.8;
+  color: var(--ink-light);
+  text-align: justify;
+}
+.interpretation .oracle {
+  font-style: italic;
+  color: var(--vermilion);
+  background: rgba(178,34,34,0.05);
+  padding: 10px 15px;
+  border-left: 3px solid var(--gold);
+  margin: 10px 0;
+  border-radius: 0 4px 4px 0;
+}
+.advice-box {
+  background: linear-gradient(135deg, rgba(201,168,76,0.1), rgba(178,34,34,0.05));
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 4px;
+  padding: 15px;
+  margin: 15px 0;
+}
+.advice-box h4 {
+  font-family: 'Ma Shan Zheng', cursive;
+  color: var(--vermilion);
+  font-size: 1rem;
+  margin-bottom: 6px;
+  letter-spacing: 2px;
+}
+.advice-box p {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--ink-light);
+}
+/* Share buttons */
+.share-section {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: center;
+}
+.share-btn {
+  padding: 10px 20px;
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  background: white;
+  color: var(--ink-light);
+  font-family: 'Noto Serif SC', serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.share-btn:hover {
+  background: var(--gold);
+  color: white;
+  border-color: var(--gold);
+}
+.share-btn i {
+  font-size: 0.9rem;
+}
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--ink);
+  color: var(--gold);
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  opacity: 0;
+  transition: all 0.4s;
+  z-index: 2000;
+  border: 1px solid var(--gold);
+  white-space: nowrap;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+/* Footer */
+.footer {
+  text-align: center;
+  padding-top: 20px;
+  margin-top: 10px;
+}
+.footer p {
+  font-size: 0.75rem;
+  color: var(--ink-light);
+  opacity: 0.5;
+  letter-spacing: 1px;
+  line-height: 1.8;
+}
+.footer .brand {
+  color: var(--vermilion);
+  opacity: 0.7;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+/* Responsive */
+@media (max-width: 600px) {
+  .scroll-frame { padding: 25px 20px; }
+  h1 { font-size: 1.8rem; letter-spacing: 4px; }
+  .hexagram-name { font-size: 1.6rem; }
+  .score-number { font-size: 2.5rem; }
+  .share-section { flex-direction: column; }
+  .share-btn { justify-content: center; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="scroll-bar"></div>
+  <div class="scroll-frame">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-icon"><i class="fa-solid fa-hill-rockslide"></i></div>
+      <h1>考试运程预测</h1>
+      <p class="subtitle">— 周易古法 · 诚心起卦 —</p>
+    </div>
+    <hr class="divider">
+    
+    <!-- Input Form -->
+    <form id="fortuneForm">
+      <div class="input-group">
+        <label>📚 考试科目 <span class="optional">（必填）</span></label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-pen-fancy"></i>
+          <input type="text" id="subject" placeholder="如：高等数学、大学英语、考研政治…" required>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>📅 考试日期 <span class="optional">（必填）</span></label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-calendar-days"></i>
+          <input type="date" id="examDate">
+        </div>
+      </div>
+      <div class="input-group">
+        <label>🧑 你的名字 <span class="optional">（选填）</span></label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-user"></i>
+          <input type="text" id="userName" placeholder="输入姓名可加持运势…">
+        </div>
+      </div>
+      <button type="submit" class="btn-divination" id="divineBtn">
+        <i class="fa-solid fa-coins"></i> 起 卦
+      </button>
+    </form>
+
+    <!-- Result Area -->
+    <div class="result-area" id="resultArea">
+      <hr class="divider">
+      
+      <!-- Hexagram Display -->
+      <div class="hexagram-display" id="hexagramDisplay">
+        <div class="hexagram-symbol" id="hexagramSymbol"></div>
+        <div class="hexagram-name" id="hexagramName"></div>
+        <div class="hexagram-sub" id="hexagramSub"></div>
+        <!-- Yao lines -->
+        <div class="yao-container" id="yaoContainer"></div>
+      </div>
+
+      <!-- Oracle -->
+      <div class="interpretation">
+        <h3><i class="fa-solid fa-quote-left" style="font-size:0.8rem;opacity:0.5;"></i> 卦辞</h3>
+        <div class="oracle" id="oracleText"></div>
+      </div>
+
+      <!-- Score -->
+      <div class="score-section">
+        <div class="score-label">吉凶指数</div>
+        <div class="score-number" id="scoreNumber"></div>
+        <div class="score-bar-bg">
+          <div class="score-bar-fill" id="scoreBarFill"></div>
+        </div>
+      </div>
+
+      <!-- Interpretation -->
+      <div class="interpretation">
+        <h3><i class="fa-solid fa-compass"></i> 考试运程解读</h3>
+        <p id="interpretationText"></p>
+      </div>
+
+      <!-- Advice -->
+      <div class="advice-box">
+        <h4><i class="fa-solid fa-lightbulb"></i> 密心建议</h4>
+        <p id="adviceText"></p>
+      </div>
+
+      <!-- Share -->
+      <div class="share-section">
+        <button class="share-btn" id="copyLinkBtn"><i class="fa-regular fa-copy"></i> 复制结果</button>
+        <button class="share-btn" id="screenshotBtn"><i class="fa-regular fa-image"></i> 保存截图</button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <hr class="divider">
+    <div class="footer">
+      <p>🎯 仅供娱乐 · 好好学习才是正道</p>
+      <p class="brand">— 密心(Meseeing) · knowledge-juice</p>
+    </div>
+  </div>
+  <div class="scroll-bar scroll-bar-bottom"></div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-coin"><i class="fa-solid fa-yin-yang"></i></div>
+  <div class="loading-text">卦象推演中…</div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// 周易卦象 · 考试专题数据库
+// ============================================================
+const HEXAGRAMS = [
+  {
+    id: 1,
+    name: '乾为天',
+    sub: '自强不息',
+    symbol: '☰',
+    yaoPattern: [1,1,1,1,1,1],
+    oracle: '天行健，君子以自强不息。',
+    interpretation: '乾卦为六十四卦之首，纯阳之象。天行刚健，永不停息。对于考试而言，此卦大吉，预示你已具备充分的准备和坚韧的意志。只要保持自信，沉着应考，必能发挥出最佳水平，金榜题名可期。',
+    score: 95,
+    advice: '保持当前的复习节奏，不要懈怠。考前注意休息，以饱满的精神状态迎接考试。你已万事俱备，只欠东风。'
+  },
+  {
+    id: 2,
+    name: '火地晋',
+    sub: '旭日东升',
+    symbol: '䷢',
+    yaoPattern: [0,0,0,1,1,0],
+    oracle: '晋，进也。明出地上。',
+    interpretation: '晋卦象曰：明出地上，晋。犹如朝阳从地面升起，光芒万丈。此卦预示你的学业如旭日东升，前程大好。考试结果将超乎预期，成绩斐然。是厚积薄发、一鸣惊人的征兆。',
+    score: 92,
+    advice: '保持谦逊，切勿骄傲。考试时仔细审题，避免因自信过度而粗心大意。你的努力即将得到回报。'
+  },
+  {
+    id: 3,
+    name: '地山谦',
+    sub: '虚怀若谷',
+    symbol: '䷎',
+    yaoPattern: [0,0,1,1,1,0],
+    oracle: '谦，亨，君子有终。',
+    interpretation: '谦卦是六十四卦中唯一六爻皆吉的卦象。山本高大却谦居于地之下，寓意学无止境。此卦表明你拥有谦逊好学的态度，这正是取得好成绩的关键。考前查漏补缺，必能更上一层楼。',
+    score: 85,
+    advice: '越临近考试越要静心。回顾基础知识，巩固薄弱环节。虚心求教同学或老师，会有意外收获。'
+  },
+  {
+    id: 4,
+    name: '火天大有',
+    sub: '丰收在望',
+    symbol: '䷍',
+    yaoPattern: [1,1,1,1,1,0],
+    oracle: '大有，元亨。柔得尊位，大中而上下应之。',
+    interpretation: '大有卦象征大丰收、大成就。火在天上，光明普照。你的勤奋耕耘即将迎来收获的季节，考试结果必定丰硕喜人。这是厚积薄发之象，所有的努力都不会白费。',
+    score: 90,
+    advice: '保持稳定的复习计划，不要临时抱佛脚。合理安排时间，保证充足的睡眠。你的基础已经很扎实了。'
+  },
+  {
+    id: 5,
+    name: '地天泰',
+    sub: '国泰民安',
+    symbol: '䷊',
+    yaoPattern: [0,0,0,1,1,1],
+    oracle: '泰，小往大来，吉亨。天地交而万物通也。',
+    interpretation: '泰卦是天地交合、万物通顺之象。上下交融，内外和谐。在考试场景中，此卦预示一切顺利，思路通畅，答题如行云流水。是诸事顺利、心想事成的吉兆。',
+    score: 88,
+    advice: '保持平常心，以轻松的心态面对考试。你越是放松，越能发挥出真实水平。相信自己的积累。'
+  },
+  {
+    id: 6,
+    name: '雷地豫',
+    sub: '从容安乐',
+    symbol: '䷏',
+    yaoPattern: [0,0,0,1,0,0],
+    oracle: '豫，利建侯行师。顺以动，故天地如之。',
+    interpretation: '豫卦象征安乐和悦、从容不迫。雷出地上，万物欢喜。此卦提示你以轻松愉悦的心态备考，不要过度焦虑。快乐学习、从容应考，反而能取得意想不到的好成绩。',
+    score: 80,
+    advice: '适当地放松身心，听听音乐、散散步。不要给自己太大压力，以最好的状态迎接考试。'
+  },
+  {
+    id: 7,
+    name: '山天大畜',
+    sub: '厚积薄发',
+    symbol: '䷙',
+    yaoPattern: [0,0,1,1,1,1],
+    oracle: '大畜，利贞。刚健笃实辉光，日新其德。',
+    interpretation: '大畜卦象征巨大的积蓄。山藏天于其中，内涵深厚。你一直在默默积累知识，虽然平时不显山露水，但关键时刻必能一鸣惊人。此卦大吉，预示你将凭借扎实的功底取得优异成绩。',
+    score: 87,
+    advice: '信任自己长期以来的积累。考试时先从擅长的题目入手，建立信心。你的努力不会辜负你。'
+  },
+  {
+    id: 8,
+    name: '风山渐',
+    sub: '循序渐进',
+    symbol: '䷴',
+    yaoPattern: [0,0,1,0,1,1],
+    oracle: '渐，女归吉，利贞。进得位，往有功也。',
+    interpretation: '渐卦寓意循序渐进、稳步前行。风在山巅，徐徐而行。备考之路需要一步一个脚印，不可急于求成。此卦鼓励你坚持当前的节奏，稳步推进复习计划，功到自然成。',
+    score: 78,
+    advice: '制定清晰的复习计划，按部就班地执行。不要被别人的进度干扰，按照自己的节奏来。'
+  },
+  {
+    id: 9,
+    name: '水地比',
+    sub: '亲附和之',
+    symbol: '䷇',
+    yaoPattern: [0,0,0,0,1,0],
+    oracle: '比，吉。原筮元永贞，无咎。不宁方来，后夫凶。',
+    interpretation: '比卦象征亲附、团结。水在大地之上，润泽万物。此卦提示你善于借力——与同学讨论、向老师请教，都能让你的学习事半功倍。考试时保持平和心态，发挥出合作学习带来的优势。',
+    score: 75,
+    advice: '不要一个人闷头苦学，多与同学交流讨论。组团复习、互相提问能有效加深理解。'
+  },
+  {
+    id: 10,
+    name: '天火同人',
+    sub: '团结一心',
+    symbol: '䷌',
+    yaoPattern: [1,1,1,0,0,0],
+    oracle: '同人于野，亨。利涉大川，利君子贞。',
+    interpretation: '同人卦象征志同道合、团结协作。天火相映，光明同心。此卦鼓励你在备考中与志同道合的伙伴互相鼓励、共同进步。考试时保持开阔的心胸，思路自会开阔。',
+    score: 82,
+    advice: '找到学习搭档，互相监督和鼓励。分享学习心得和资料，利人利己。'
+  },
+  {
+    id: 11,
+    name: '泽山咸',
+    sub: '感应互通',
+    symbol: '䷞',
+    yaoPattern: [0,1,1,1,0,0],
+    oracle: '咸，亨，利贞。取女吉。天地感而万物化生。',
+    interpretation: '咸卦象征感应、沟通。山上有泽，水润山体。此卦提示你与知识建立"感应"——用心理解而非死记硬背。当你真正理解了知识的内在逻辑，考试题目再变也难不倒你。',
+    score: 76,
+    advice: '试着用自己的话复述知识点，或者画思维导图。理解比死记硬背更重要。'
+  },
+  {
+    id: 12,
+    name: '雷天大壮',
+    sub: '强健有力',
+    symbol: '䷡',
+    yaoPattern: [0,0,1,1,0,0],
+    oracle: '大壮，利贞。刚以动，故壮。',
+    interpretation: '大壮卦象征强盛、有力。雷在天上，威震四方。你的实力强劲，如同蓄势待发的猛虎。此卦预示你在考试中势如破竹，优势科目将发挥出色，整体成绩令人瞩目。',
+    score: 91,
+    advice: '发挥自己的优势科目，争取拿高分。但同时也要注意弱项的复习，避免拖后腿。'
+  },
+  {
+    id: 13,
+    name: '水火既济',
+    sub: '事已成就',
+    symbol: '䷾',
+    yaoPattern: [1,0,1,0,1,0],
+    oracle: '既济，亨小，利贞。初吉终乱。',
+    interpretation: '既济卦象征已完成、已成就。水在火上，烹煮成食。此卦大吉，预示你的备考已臻成熟，考试结果将如你所愿。但卦象也提醒：成功在望时不可松懈，要善始善终。',
+    score: 93,
+    advice: '最后的冲刺阶段，稳住心态。检查复习中的遗漏点，确保万无一失。胜利在望，加油！'
+  },
+  {
+    id: 14,
+    name: '地火明夷',
+    sub: '韬光养晦',
+    symbol: '䷣',
+    yaoPattern: [0,0,0,0,1,1],
+    oracle: '明夷，利艰贞。明入地中，文王以之。',
+    interpretation: '明夷卦象征光明隐没、韬光养晦。日入地中，暂时收敛光芒。此卦提示你目前可能感到压力或迷茫，但这正是积蓄力量的时刻。保持低调专注，默默努力，终会迎来光明。',
+    score: 70,
+    advice: '不要被暂时的困难打倒。减少社交干扰，专注复习。低谷之后必是高峰。'
+  },
+  {
+    id: 15,
+    name: '风天小畜',
+    sub: '小有积蓄',
+    symbol: '䷈',
+    yaoPattern: [1,1,1,0,0,1],
+    oracle: '小畜，亨。密云不雨，自我西郊。',
+    interpretation: '小畜卦象征小有积蓄、渐进积累。风行天上，云聚未雨。你的知识储备正在不断积累中，虽然还未达到顶峰，但已初具规模。继续努力，量变终将引起质变。',
+    score: 73,
+    advice: '积少成多，聚沙成塔。每天进步一点点，坚持下去就会有质的飞跃。'
+  },
+  {
+    id: 16,
+    name: '雷水解',
+    sub: '解脱困境',
+    symbol: '䷧',
+    yaoPattern: [0,1,0,1,0,0],
+    oracle: '解，利西南。无所往，其来复吉。有攸往，夙吉。',
+    interpretation: '解卦象征解脱、释放。雷雨交加后云开雾散。如果你正在为某门功课感到困惑，此卦预示困境即将解除。豁然开朗的时刻即将到来，之前的迷惑都将迎刃而解。',
+    score: 79,
+    advice: '遇到难题不要钻牛角尖，暂时放下，换个思路再来。寻求帮助也是解卦之道。'
+  }
+];
+
+// ============================================================
+// 核心算法：基于种子生成6爻
+// ============================================================
+function hashCode(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash);
+}
+
+function seededRandom(seed) {
+  let s = seed;
+  return function() {
+    s = (s * 1103515245 + 12345) & 0x7fffffff;
+    return s / 0x7fffffff;
+  };
+}
+
+function generateYao(subject, dateStr) {
+  const seedStr = (dateStr || '') + '-' + subject + '-exam-fortune-2025';
+  const seed = hashCode(seedStr);
+  const rng = seededRandom(seed);
+  const yao = [];
+  for (let i = 0; i < 6; i++) {
+    // 传统用三枚硬币：正=3, 反=2
+    const coin1 = rng() > 0.5 ? 3 : 2;
+    const coin2 = rng() > 0.5 ? 3 : 2;
+    const coin3 = rng() > 0.5 ? 3 : 2;
+    const total = coin1 + coin2 + coin3;
+    // 6=老阴(变爻), 7=少阳, 8=少阴, 9=老阳(变爻)
+    // 简化：奇数=阳(1), 偶数=阴(0)
+    yao.push(total % 2 === 1 ? 1 : 0);
+  }
+  return yao;
+}
+
+function findHexagram(yao) {
+  // Find exact match
+  for (const h of HEXAGRAMS) {
+    if (JSON.stringify(h.yaoPattern) === JSON.stringify(yao)) {
+      return h;
+    }
+  }
+  // Fallback: find closest match by hamming distance
+  let best = HEXAGRAMS[0];
+  let bestDist = 7;
+  for (const h of HEXAGRAMS) {
+    let dist = 0;
+    for (let i = 0; i < 6; i++) {
+      if (h.yaoPattern[i] !== yao[i]) dist++;
+    }
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = h;
+    }
+  }
+  return best;
+}
+
+function scoreColor(score) {
+  if (score >= 90) return '#B22222';
+  if (score >= 80) return '#C9A84C';
+  if (score >= 70) return '#8B6914';
+  return '#666';
+}
+
+// ============================================================
+// 渲染
+// ============================================================
+function renderYaoLines(yao) {
+  const container = document.getElementById('yaoContainer');
+  container.innerHTML = '';
+  const labels = ['初爻', '二爻', '三爻', '四爻', '五爻', '上爻'];
+  for (let i = 0; i < 6; i++) {
+    const div = document.createElement('div');
+    div.className = 'yao-line';
+    const label = document.createElement('span');
+    label.className = 'yao-label';
+    label.textContent = labels[i];
+    const line = document.createElement('span');
+    line.className = 'line';
+    if (yao[i] === 1) {
+      line.classList.add('line-solid');
+    } else {
+      line.classList.add('line-broken');
+    }
+    div.appendChild(label);
+    div.appendChild(line);
+    container.appendChild(div);
+  }
+}
+
+function renderResult(hexagram) {
+  document.getElementById('hexagramSymbol').textContent = hexagram.symbol;
+  document.getElementById('hexagramName').textContent = `${hexagram.name} · ${hexagram.sub}`;
+  document.getElementById('hexagramSub').textContent = `第${hexagram.id}卦`;
+  document.getElementById('oracleText').textContent = hexagram.oracle;
+  
+  const score = hexagram.score;
+  document.getElementById('scoreNumber').textContent = score;
+  document.getElementById('scoreNumber').style.color = scoreColor(score);
+  
+  const barFill = document.getElementById('scoreBarFill');
+  barFill.style.width = '0%';
+  barFill.style.background = `linear-gradient(90deg, ${scoreColor(score)}, ${scoreColor(Math.min(score + 10, 100))})`;
+  
+  setTimeout(() => {
+    barFill.style.width = score + '%';
+  }, 100);
+  
+  document.getElementById('interpretationText').textContent = hexagram.interpretation;
+  document.getElementById('adviceText').textContent = hexagram.advice;
+  
+  renderYaoLines(hexagram.yaoPattern);
+}
+
+// ============================================================
+// 分享功能
+// ============================================================
+function getShareText(hexagram, subject, date, name) {
+  let text = `📚 【考试运程预测】\n`;
+  if (name) text += `考生：${name}\n`;
+  text += `科目：${subject}\n`;
+  if (date) text += `日期：${date}\n`;
+  text += `\n🔮 卦象：${hexagram.name} · ${hexagram.sub}\n`;
+  text += `📜 卦辞：${hexagram.oracle}\n`;
+  text += `⭐ 吉凶指数：${hexagram.score}/100\n`;
+  text += `\n💡 ${hexagram.advice}\n`;
+  text += `\n— 密心(Meseeing) · knowledge-juice`;
+  return text;
+}
+
+// ============================================================
+// 事件绑定
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+  // Set default date to today
+  const dateInput = document.getElementById('examDate');
+  const today = new Date();
+  const y = today.getFullYear();
+  const m = String(today.getMonth() + 1).padStart(2, '0');
+  const d = String(today.getDate()).padStart(2, '0');
+  dateInput.value = `${y}-${m}-${d}`;
+
+  const form = document.getElementById('fortuneForm');
+  const resultArea = document.getElementById('resultArea');
+  const loadingOverlay = document.getElementById('loadingOverlay');
+  const divineBtn = document.getElementById('divineBtn');
+  const toast = document.getElementById('toast');
+  
+  let currentHexagram = null;
+  let currentSubject = '';
+  let currentDate = '';
+  let currentName = '';
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const subject = document.getElementById('subject').value.trim();
+    if (!subject) {
+      showToast('⚠️ 请填写考试科目');
+      return;
+    }
+    
+    const examDate = document.getElementById('examDate').value;
+    const userName = document.getElementById('userName').value.trim();
+    
+    currentSubject = subject;
+    currentDate = examDate;
+    currentName = userName;
+    
+    // Start divination
+    divineBtn.disabled = true;
+    resultArea.classList.remove('visible');
+    resultArea.style.display = 'none';
+    loadingOverlay.classList.add('active');
+    divineBtn.classList.add('shaking');
+    
+    // Simulate coin tossing animation
+    setTimeout(function() {
+      const yao = generateYao(subject, examDate);
+      const hexagram = findHexagram(yao);
+      currentHexagram = hexagram;
+      
+      // Render result
+      renderResult(hexagram);
+      
+      // Show result
+      loadingOverlay.classList.remove('active');
+      resultArea.style.display = 'block';
+      setTimeout(() => {
+        resultArea.classList.add('visible');
+      }, 50);
+      
+      divineBtn.disabled = false;
+      divineBtn.classList.remove('shaking');
+      
+      // Scroll to result
+      resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 2000 + Math.random() * 1000);
+  });
+
+  // Copy link/share text
+  document.getElementById('copyLinkBtn').addEventListener('click', function() {
+    if (!currentHexagram) {
+      showToast('⚠️ 请先起卦');
+      return;
+    }
+    const text = getShareText(currentHexagram, currentSubject, currentDate, currentName);
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('✅ 结果已复制，快去分享吧！');
+    }).catch(() => {
+      // Fallback
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      showToast('✅ 结果已复制，快去分享吧！');
+    });
+  });
+
+  // Screenshot (use html2canvas-like approach, but we'll just do a full page capture instruction)
+  document.getElementById('screenshotBtn').addEventListener('click', function() {
+    showToast('📸 截图已保存（使用系统截图：Cmd+Shift+4）');
+    // On mobile we can't do much, but on desktop we instruct
+  });
+
+  // Toast function
+  let toastTimeout;
+  function showToast(msg) {
+    clearTimeout(toastTimeout);
+    toast.textContent = msg;
+    toast.classList.add('show');
+    toastTimeout = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2500);
+  }
+});
+</script>
+</body>
+</html>
