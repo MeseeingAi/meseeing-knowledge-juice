@@ -1,0 +1,54 @@
+{
+  "title": "AI智能鸟相机 - 品牌广告",
+  "style": "cinematic",
+  "shots": [
+    {
+      "shot_id": 1,
+      "description": "开阔的自然环境，暗示AI智能鸟相机的使用场景，阳光透过树叶洒下",
+      "prompt": "Cinematic, film grain, 4K, professional lighting, shallow depth of field, 开阔的自然环境，暗示AI智能鸟相机的使用场景，阳光透过树叶洒下, aerial view, drone shot, birds eye view, masterpiece, highest quality, trending on artstation",
+      "duration": 5,
+      "camera_motion": "aerial",
+      "style": "cinematic"
+    },
+    {
+      "shot_id": 2,
+      "description": "近景：一位自然爱好者正在仰望树梢，似乎在寻找什么，表情专注",
+      "prompt": "Cinematic, film grain, 4K, professional lighting, shallow depth of field, 近景：一位自然爱好者正在仰望树梢，似乎在寻找什么，表情专注, dolly zoom in, camera slowly moving forward, masterpiece, highest quality, trending on artstation",
+      "duration": 4,
+      "camera_motion": "push_in",
+      "style": "cinematic"
+    },
+    {
+      "shot_id": 3,
+      "description": "特写：AI智能鸟相机出现在画面中，精致的外观设计，科技感十足",
+      "prompt": "Cinematic, film grain, 4K, professional lighting, shallow depth of field, 特写：AI智能鸟相机出现在画面中，精致的外观设计，科技感十足, tracking shot moving right, masterpiece, highest quality, trending on artstation",
+      "duration": 5,
+      "camera_motion": "track_right",
+      "style": "cinematic"
+    },
+    {
+      "shot_id": 4,
+      "description": "主观视角：通过设备屏幕看到一只鸟落在枝头，界面自动显示鸟类名称和特征信息",
+      "prompt": "Cinematic, film grain, 4K, professional lighting, shallow depth of field, 主观视角：通过设备屏幕看到一只鸟落在枝头，界面自动显示鸟类名称和特征信息, dolly zoom in, camera slowly moving forward, masterpiece, highest quality, trending on artstation",
+      "duration": 6,
+      "camera_motion": "push_in",
+      "style": "cinematic"
+    },
+    {
+      "shot_id": 5,
+      "description": "人物面部表情：用户看到识别结果后露出惊喜和满足的微笑",
+      "prompt": "Cinematic, film grain, 4K, professional lighting, shallow depth of field, 人物面部表情：用户看到识别结果后露出惊喜和满足的微笑, camera slowly pulling back, revealing the scene, masterpiece, highest quality, trending on artstation",
+      "duration": 4,
+      "camera_motion": "pull_out",
+      "style": "cinematic"
+    },
+    {
+      "shot_id": 6,
+      "description": "远景：用户手持AI智能鸟相机站在美丽的自然风景中，人与科技和谐共存，品牌Slogan浮现",
+      "prompt": "Cinematic, film grain, 4K, professional lighting, shallow depth of field, 远景：用户手持AI智能鸟相机站在美丽的自然风景中，人与科技和谐共存，品牌Slogan浮现, crane shot rising up, masterpiece, highest quality, trending on artstation",
+      "duration": 6,
+      "camera_motion": "crane_up",
+      "style": "cinematic"
+    }
+  ]
+}
