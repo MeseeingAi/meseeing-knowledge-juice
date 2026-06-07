@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎬 短视频脚本工厂 — 分镜板生成器</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --bg-primary: #0a0a1a;
+  --bg-card: #12122a;
+  --bg-input: #1a1a3e;
+  --accent-purple: #8b5cf6;
+  --accent-gold: #f59e0b;
+  --accent-gold-dark: #d97706;
+  --text-primary: #f0f0ff;
+  --text-secondary: #a0a0c0;
+  --border-color: #2a2a5a;
+  --card-shadow: 0 4px 20px rgba(139, 92, 246, 0.15);
+  --radius: 12px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans SC', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+::selection { background: var(--accent-purple); color: #fff; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--accent-purple); border-radius: 3px; }
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 40px 20px 20px;
+  background: linear-gradient(180deg, rgba(139,92,246,0.1) 0%, transparent 100%);
+  border-bottom: 1px solid var(--border-color);
+}
+.header h1 {
+  font-size: 2.2rem;
+  background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+.header p { color: var(--text-secondary); font-size: 1rem; }
+.header .badge {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  background: rgba(139,92,246,0.2);
+  border: 1px solid var(--accent-purple);
+  color: var(--accent-gold);
+  font-size: 0.8rem;
+}
+
+/* Container */
+.container { max-width: 1100px; margin: 0 auto; padding: 30px 20px; }
+
+/* Input Section */
+.input-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 30px;
+  box-shadow: var(--card-shadow);
+}
+.input-section label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--accent-gold);
+}
+.input-section label i { margin-right: 8px; }
+.input-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.input-row textarea {
+  flex: 1;
+  min-width: 280px;
+  min-height: 80px;
+  padding: 14px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  resize: vertical;
+  transition: var(--transition);
+}
+.input-row textarea:focus {
+  outline: none;
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 0 3px rgba(139,92,246,0.2);
+}
+.input-row textarea::placeholder { color: #555; }
+.style-select-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 180px;
+}
+.style-select-wrap select {
+  padding: 12px 14px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: var(--transition);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b5cf6' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+.style-select-wrap select:focus {
+  outline: none;
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 0 3px rgba(139,92,246,0.2);
+}
+.btn-generate {
+  width: 100%;
+  margin-top: 18px;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--accent-purple), #6d28d9);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  letter-spacing: 2px;
+}
+.btn-generate:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(139,92,246,0.4);
+}
+.btn-generate:active { transform: translateY(0); }
+.btn-generate i { margin-right: 10px; }
+.btn-generate:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Results Section */
+.results-section { display: none; }
+.results-section.visible { display: block; }
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.results-header h2 {
+  font-size: 1.4rem;
+  color: var(--accent-gold);
+}
+.results-header h2 i { margin-right: 8px; }
+.results-header .shot-count {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+}
+
+/* Shot Cards Grid */
+.shots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+.shot-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 20px;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.shot-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--accent-purple), var(--accent-gold));
+  border-radius: 0 2px 2px 0;
+}
+.shot-card:hover {
+  border-color: var(--accent-purple);
+  box-shadow: 0 4px 20px rgba(139,92,246,0.2);
+  transform: translateY(-2px);
+}
+.shot-card .shot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.shot-card .shot-id {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 12px;
+  border-radius: 20px;
+  background: rgba(139,92,246,0.2);
+  border: 1px solid var(--accent-purple);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+}
+.shot-card .shot-duration {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+.shot-card .shot-duration i { margin-right: 4px; }
+.shot-card .shot-desc {
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+.shot-card .shot-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.shot-card .shot-meta .tag {
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  border: 1px solid var(--border-color);
+}
+.shot-card .shot-meta .tag.camera { color: #60a5fa; border-color: rgba(96,165,250,0.3); background: rgba(96,165,250,0.1); }
+.shot-card .shot-meta .tag.style { color: #34d399; border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.1); }
+.shot-card .shot-prompt {
+  background: var(--bg-input);
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-height: 80px;
+  overflow-y: auto;
+  word-break: break-all;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+}
+.shot-card .shot-prompt:hover { max-height: 300px; }
+.shot-card .shot-prompt::after {
+  content: '👆 悬停展开';
+  position: absolute;
+  bottom: 4px;
+  right: 8px;
+  font-size: 0.65rem;
+  color: var(--accent-purple);
+  opacity: 0.6;
+}
+.shot-card .shot-prompt:hover::after { opacity: 0; }
+
+/* JSON Section */
+.json-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+.json-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  cursor: pointer;
+  user-select: none;
+  transition: var(--transition);
+}
+.json-header:hover { background: rgba(139,92,246,0.05); }
+.json-header h3 { font-size: 1rem; color: var(--text-secondary); }
+.json-header h3 i { margin-right: 8px; }
+.json-header .toggle-icon { transition: transform 0.3s; color: var(--accent-purple); }
+.json-header .toggle-icon.collapsed { transform: rotate(-90deg); }
+.json-body {
+  padding: 0 20px 20px;
+  transition: var(--transition);
+}
+.json-body.hidden { display: none; }
+.json-body pre {
+  background: var(--bg-input);
+  border-radius: 6px;
+  padding: 16px;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  max-height: 400px;
+  overflow-y: auto;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* Action Buttons */
+.action-bar {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.action-bar button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  border: 1px solid var(--border-color);
+  background: var(--bg-input);
+  color: var(--text-primary);
+}
+.action-bar button:hover {
+  border-color: var(--accent-purple);
+  background: rgba(139,92,246,0.15);
+  transform: translateY(-1px);
+}
+.action-bar button.copy-btn { border-color: var(--accent-purple); color: var(--accent-gold); }
+.action-bar button.download-btn { background: linear-gradient(135deg, var(--accent-purple), #6d28d9); border-color: var(--accent-purple); color: #fff; }
+.action-bar button.download-btn:hover { box-shadow: 0 4px 15px rgba(139,92,246,0.3); }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--bg-card);
+  border: 1px solid var(--accent-purple);
+  border-radius: 8px;
+  padding: 12px 24px;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 999;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.toast i { margin-right: 8px; color: var(--accent-gold); }
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 30px 20px;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+.footer .heart { color: #ef4444; }
+.footer .brand { color: var(--accent-gold); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header h1 { font-size: 1.6rem; }
+  .input-row { flex-direction: column; }
+  .input-row textarea { min-width: 100%; }
+  .style-select-wrap { min-width: 100%; }
+  .shots-grid { grid-template-columns: 1fr; }
+  .results-header { flex-direction: column; align-items: flex-start; }
+  .action-bar { justify-content: center; }
+}
+@media (max-width: 480px) {
+  .container { padding: 16px; }
+  .input-section { padding: 18px; }
+  .shot-card { padding: 14px; }
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.generating .btn-generate { animation: pulse 1.2s infinite; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <h1>🎬 短视频脚本工厂</h1>
+  <p>输入产品描述，自动生成专业级分镜板 + 视频生成 Prompt</p>
+  <span class="badge"><i class="fas fa-magic"></i> 5种风格 · 6镜头叙事 · 一键导出</span>
+</header>
+
+<div class="container">
+
+  <!-- Input Section -->
+  <div class="input-section">
+    <label for="productDesc"><i class="fas fa-pen-fancy"></i> 产品/服务描述</label>
+    <div class="input-row">
+      <textarea id="productDesc" placeholder="例如：一款能自动识别200种鸟类的AI相机，轻便随身，户外爱好者必备">一款能自动识别200种鸟类的AI相机</textarea>
+      <div class="style-select-wrap">
+        <label for="styleSelect"><i class="fas fa-palette"></i> 视频风格</label>
+        <select id="styleSelect">
+          <option value="cinematic">🎥 电影质感 (Cinematic)</option>
+          <option value="anime">🌸 动漫风格 (Anime)</option>
+          <option value="dark_fantasy">🌑 暗黑奇幻 (Dark Fantasy)</option>
+          <option value="cyberpunk">🌃 赛博朋克 (Cyberpunk)</option>
+          <option value="realistic">📷 照片写实 (Realistic)</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-generate" id="generateBtn"><i class="fas fa-wand-magic-sparkles"></i> 生成分镜板</button>
+  </div>
+
+  <!-- Results Section -->
+  <div class="results-section" id="resultsSection">
+    <div class="results-header">
+      <h2><i class="fas fa-film"></i> <span id="storyTitle">分镜板</span></h2>
+      <span class="shot-count"><i class="fas fa-clapperboard"></i> <span id="shotCount">6</span> 个镜头</span>
+    </div>
+
+    <div class="shots-grid" id="shotsGrid"></div>
+
+    <!-- JSON Preview -->
+    <div class="json-section">
+      <div class="json-header" id="jsonHeader">
+        <h3><i class="fas fa-code"></i> JSON 预览</h3>
+        <span class="toggle-icon" id="toggleIcon"><i class="fas fa-chevron-down"></i></span>
+      </div>
+      <div class="json-body" id="jsonBody">
+        <pre id="jsonPreview">{\n  "shots": []\n}</pre>
+        <div class="action-bar">
+          <button class="copy-btn" id="copyBtn"><i class="fas fa-copy"></i> 复制 JSON</button>
+          <button class="download-btn" id="downloadBtn"><i class="fas fa-download"></i> 下载 JSON 文件</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <span class="brand">密心 (Meseeing)</span> · knowledge-juice <span class="heart">❤️</span>
+</footer>
+
+<!-- Toast -->
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg"></span></div>
+
+<script>
+// ════════════════════════════════════════════════════
+//  PromptEngine — 叙事到镜头的转换器 (纯JS版)
+//  移植自 storyboard_factory.py
+// ════════════════════════════════════════════════════
+
+const STYLE_TEMPLATES = {
+  cinematic: {
+    prefix: "Cinematic, film grain, 4K, professional lighting, shallow depth of field",
+    suffix: "masterpiece, highest quality, trending on artstation",
+  },
+  anime: {
+    prefix: "Anime style, Studio Ghibli inspired, cel shaded, vibrant colors",
+    suffix: "high quality anime, detailed background, beautiful composition",
+  },
+  dark_fantasy: {
+    prefix: "Dark fantasy, moody atmosphere, dramatic lighting, volumetric fog",
+    suffix: "epic, cinematic, dark aesthetic, highly detailed",
+  },
+  cyberpunk: {
+    prefix: "Cyberpunk, neon lights, rain, futuristic city, high contrast",
+    suffix: "synthwave aesthetic, blade runner style, detailed",
+  },
+  realistic: {
+    prefix: "Photorealistic, natural lighting, 8K, highly detailed texture",
+    suffix: "real world, authentic, sharp focus",
+  },
+};
+
+const CAMERA_MOTIONS = {
+  push_in:     "dolly zoom in, camera slowly moving forward",
+  pull_out:    "camera slowly pulling back, revealing the scene",
+  pan_left:    "panning left, following the subject",
+  pan_right:   "panning right, revealing the environment",
+  track_left:  "tracking shot moving left",
+  track_right: "tracking shot moving right",
+  crane_up:    "crane shot rising up",
+  crane_down:  "crane shot descending",
+  aerial:      "aerial view, drone shot, birds eye view",
+  handheld:    "handheld camera, slight shake, documentary style",
+  static:      "static shot, tripod mounted, stable composition",
+};
+
+const STYLE_LABELS = {
+  cinematic: "🎥 电影质感",
+  anime: "🌸 动漫风格",
+  dark_fantasy: "🌑 暗黑奇幻",
+  cyberpunk: "🌃 赛博朋克",
+  realistic: "📷 照片写实",
+};
+
+// 6镜头叙事模板 (与Python版完全一致)
+const NARRATIVE_TEMPLATE = [
+  {
+    description: (p) => `开阔的自然环境，暗示${p}的使用场景，阳光透过树叶洒下`,
+    duration: 5,
+    camera_motion: "aerial",
+    narrative: "定场 · 环境建立",
+  },
+  {
+    description: (p) => `近景：一位自然爱好者正在仰望树梢，似乎在寻找什么，表情专注`,
+    duration: 4,
+    camera_motion: "push_in",
+    narrative: "问题引入 · 用户痛点",
+  },
+  {
+    description: (p) => `特写：${p}出现在画面中，精致的外观设计，科技感十足`,
+    duration: 5,
+    camera_motion: "track_right",
+    narrative: "产品亮相 · 特写展示",
+  },
+  {
+    description: (p) => `主观视角：通过设备屏幕看到一只鸟落在枝头，界面自动显示鸟类名称和特征信息`,
+    duration: 6,
+    camera_motion: "push_in",
+    narrative: "功能演示 · 使用场景",
+  },
+  {
+    description: (p) => `人物面部表情：用户看到识别结果后露出惊喜和满足的微笑`,
+    duration: 4,
+    camera_motion: "pull_out",
+    narrative: "用户体验 · 情感反应",
+  },
+  {
+    description: (p) => `远景：用户手持${p}站在美丽的自然风景中，人与科技和谐共存，品牌Slogan浮现`,
+    duration: 6,
+    camera_motion: "crane_up",
+    narrative: "品牌收尾 · 升华",
+  },
+];
+
+// ── 核心引擎函数 ──────────────────────────────
+
+function buildPrompt(sceneDescription, style, cameraMotion) {
+  style = style || "cinematic";
+  const template = STYLE_TEMPLATES[style] || STYLE_TEMPLATES.cinematic;
+  const parts = [template.prefix, sceneDescription];
+  if (cameraMotion) {
+    const motionDesc = CAMERA_MOTIONS[cameraMotion] || cameraMotion;
+    parts.push(motionDesc);
+  }
+  parts.push(template.suffix);
+  return parts.filter(Boolean).join(", ");
+}
+
+function buildStoryboard(productDescription, style) {
+  style = style || "cinematic";
+  const titleText = productDescription.length > 20
+    ? productDescription.substring(0, 20) + "..."
+    : productDescription;
+  const shots = NARRATIVE_TEMPLATE.map((tpl, index) => {
+    const desc = tpl.description(productDescription);
+    const prompt = buildPrompt(desc, style, tpl.camera_motion);
+    return {
+      shot_id: index + 1,
+      description: desc,
+      prompt: prompt,
+      duration: tpl.duration,
+      camera_motion: tpl.camera_motion,
+      style: style,
+      narrative: tpl.narrative,
+    };
+  });
+  return {
+    title: titleText + " - 品牌广告",
+    style: style,
+    shots: shots,
+  };
+}
+
+// ── UI 渲染 ──────────────────────────────────
+
+const $ = (id) => document.getElementById(id);
+const productDesc = $("productDesc");
+const styleSelect = $("styleSelect");
+const generateBtn = $("generateBtn");
+const resultsSection = $("resultsSection");
+const shotsGrid = $("shotsGrid");
+const storyTitle = $("storyTitle");
+const shotCount = $("shotCount");
+const jsonPreview = $("jsonPreview");
+const jsonHeader = $("jsonHeader");
+const jsonBody = $("jsonBody");
+const toggleIcon = $("toggleIcon");
+const toast = $("toast");
+const toastMsg = $("toastMsg");
+
+let currentStoryboard = null;
+
+function getMotionLabel(key) {
+  const labels = {
+    push_in: "推近", pull_out: "拉远", pan_left: "左摇", pan_right: "右摇",
+    track_left: "左移", track_right: "右移", crane_up: "上升", crane_down: "下降",
+    aerial: "航拍", handheld: "手持", static: "固定",
+  };
+  return labels[key] || key;
+}
+
+function renderShots(storyboard) {
+  shotsGrid.innerHTML = "";
+  storyboard.shots.forEach((shot) => {
+    const card = document.createElement("div");
+    card.className = "shot-card";
+    card.innerHTML = `
+      <div class="shot-header">
+        <span class="shot-id"><i class="fas fa-camera"></i> 镜头 ${shot.shot_id}</span>
+        <span class="shot-duration"><i class="far fa-clock"></i> ${shot.duration}s</span>
+      </div>
+      <div class="shot-desc"><strong>${shot.narrative || ""}</strong><br>${shot.description}</div>
+      <div class="shot-meta">
+        <span class="tag camera"><i class="fas fa-video"></i> ${getMotionLabel(shot.camera_motion)}</span>
+        <span class="tag style"><i class="fas fa-palette"></i> ${STYLE_LABELS[shot.style] || shot.style}</span>
+      </div>
+      <div class="shot-prompt" title="悬停展开完整 Prompt">${shot.prompt}</div>
+    `;
+    shotsGrid.appendChild(card);
+  });
+}
+
+function renderJSON(storyboard) {
+  jsonPreview.textContent = JSON.stringify(storyboard, null, 2);
+}
+
+function showToast(msg) {
+  toastMsg.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 2500);
+}
+
+function generate() {
+  const desc = productDesc.value.trim();
+  if (!desc) {
+    showToast("⚠️ 请输入产品描述");
+    productDesc.focus();
+    return;
+  }
+  const style = styleSelect.value;
+
+  // Button loading state
+  generateBtn.disabled = true;
+  generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 生成中...';
+  generateBtn.classList.add("generating");
+
+  // Simulate a tiny delay for UX feel
+  setTimeout(() => {
+    const storyboard = buildStoryboard(desc, style);
+    currentStoryboard = storyboard;
+
+    storyTitle.textContent = storyboard.title;
+    shotCount.textContent = storyboard.shots.length;
+
+    renderShots(storyboard);
+    renderJSON(storyboard);
+
+    resultsSection.classList.add("visible");
+    resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    generateBtn.disabled = false;
+    generateBtn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> 生成分镜板';
+    generateBtn.classList.remove("generating");
+
+    showToast("✅ 分镜板生成成功！");
+  }, 400);
+}
+
+// ── 事件绑定 ──────────────────────────────────
+
+generateBtn.addEventListener("click", generate);
+
+// Enter key in textarea
+productDesc.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && e.ctrlKey) {
+    e.preventDefault();
+    generate();
+  }
+});
+
+// JSON toggle
+jsonHeader.addEventListener("click", () => {
+  jsonBody.classList.toggle("hidden");
+  toggleIcon.classList.toggle("collapsed");
+});
+
+// Copy JSON
+$("copyBtn").addEventListener("click", () => {
+  if (!currentStoryboard) return;
+  navigator.clipboard.writeText(JSON.stringify(currentStoryboard, null, 2))
+    .then(() => showToast("📋 JSON 已复制到剪贴板"))
+    .catch(() => {
+      // Fallback for older browsers
+      const ta = document.createElement("textarea");
+      ta.value = JSON.stringify(currentStoryboard, null, 2);
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      showToast("📋 JSON 已复制到剪贴板");
+    });
+});
+
+// Download JSON
+$("downloadBtn").addEventListener("click", () => {
+  if (!currentStoryboard) return;
+  const blob = new Blob([JSON.stringify(currentStoryboard, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  const filename = currentStoryboard.title.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, "_") + ".json";
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast("💾 JSON 文件已下载");
+});
+
+// ── 自动加载示例（页面加载后自动生成一次） ──
+window.addEventListener("DOMContentLoaded", () => {
+  setTimeout(generate, 300);
+});
+</script>
+
+</body>
+</html>
