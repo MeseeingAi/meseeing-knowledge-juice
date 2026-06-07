@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📄 论文速读器 — 密心 · knowledge-juice</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0e1a;--card:#111827;--border:#1e3a5f;--accent:#38bdf8;--accent2:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--success:#4ade80;--warning:#fbbf24;--danger:#f87171}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+.container{max-width:960px;margin:0 auto;padding:20px}
+header{text-align:center;padding:40px 0 30px}
+header h1{font-size:2rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+header p{color:var(--muted);margin-top:8px;font-size:0.95rem}
+.input-section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:24px}
+.input-section h2{font-size:1.1rem;margin-bottom:16px;color:var(--accent);display:flex;align-items:center;gap:8px}
+textarea{width:100%;min-height:200px;background:#0d1321;border:1px solid var(--border);border-radius:12px;padding:16px;color:var(--text);font-size:0.95rem;line-height:1.7;resize:vertical;font-family:inherit;transition:border-color .2s}
+textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,.15)}
+textarea::placeholder{color:#475569}
+.upload-area{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+.upload-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--border);border:1px dashed var(--accent);border-radius:10px;color:var(--accent);cursor:pointer;font-size:0.9rem;transition:all .2s}
+.upload-btn:hover{background:rgba(56,189,248,.12);border-color:var(--accent2)}
+.upload-btn i{font-size:1rem}
+input[type="file"]{display:none}
+.api-key-row{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+.api-key-row label{color:var(--muted);font-size:0.88rem;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.api-key-row input{flex:1;min-width:200px;padding:8px 14px;background:#0d1321;border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.88rem;font-family:monospace}
+.api-key-row input:focus{outline:none;border-color:var(--accent2)}
+.btn-group{display:flex;gap:12px;margin-top:18px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border:none;border-radius:10px;font-size:0.95rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0e1a}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(56,189,248,.3)}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-secondary{background:var(--border);color:var(--text)}
+.btn-secondary:hover{background:#1e4a6f}
+.btn-secondary:disabled{opacity:.4;cursor:not-allowed}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted);padding:10px 18px;font-size:0.85rem}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.status-bar{display:none;align-items:center;gap:12px;padding:14px 18px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:20px;font-size:0.9rem;color:var(--muted)}
+.status-bar.show{display:flex}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.result-section{display:none}
+.result-section.show{display:block}
+.result-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 24px;transition:border-color .2s}
+.result-card:hover{border-color:rgba(56,189,248,.25)}
+.result-card .label{font-size:0.8rem;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.result-card .content{font-size:0.95rem;line-height:1.7;color:var(--text);white-space:pre-wrap}
+.result-card .content.keywords{display:flex;flex-wrap:wrap;gap:8px}
+.keyword-tag{padding:4px 14px;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.25);border-radius:20px;font-size:0.85rem;color:var(--accent)}
+.action-bar{display:flex;gap:12px;margin-top:24px;justify-content:center;flex-wrap:wrap}
+footer{text-align:center;padding:40px 0;color:var(--muted);font-size:0.85rem;border-top:1px solid var(--border);margin-top:40px}
+.section-badge{display:inline-block;padding:2px 10px;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.2);border-radius:6px;font-size:0.75rem;color:var(--accent2);margin:2px}
+.stats-line{color:var(--muted);font-size:0.82rem;margin-top:12px;text-align:center}
+.error-msg{color:var(--danger);font-size:0.88rem;margin-top:8px;padding:10px 14px;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:8px;display:none}
+.error-msg.show{display:block}
+@media(min-width:640px){.result-grid{grid-template-columns:1fr 1fr}.result-card.full{grid-column:1/-1}.container{padding:30px}}
+@media(max-width:480px){header h1{font-size:1.5rem}.input-section{padding:18px}.btn{padding:10px 20px;font-size:0.88rem}.btn-group{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<div class="container">
+<header>
+<h1><i class="fas fa-newspaper"></i> 论文速读器</h1>
+<p>粘贴论文文本或上传PDF，智能提取结构化干货</p>
+</header>
+
+<div class="input-section">
+<h2><i class="fas fa-pen"></i> 输入论文</h2>
+<textarea id="paperInput" placeholder="在此粘贴论文全文或摘要...&#10;&#10;支持中英文论文，直接粘贴即可。"></textarea>
+
+<div class="upload-area">
+<label class="upload-btn" for="pdfUpload">
+<i class="fas fa-file-pdf"></i> 上传PDF
+</label>
+<input type="file" id="pdfUpload" accept=".pdf">
+<span class="file-info" id="fileInfo"></span>
+</div>
+
+<div class="api-key-row">
+<label><i class="fas fa-key"></i> OpenAI Key（可选）</label>
+<input type="password" id="apiKeyInput" placeholder="sk-... 填入后可启用AI增强摘要" autocomplete="off">
+</div>
+
+<div class="btn-group">
+<button class="btn btn-primary" id="analyzeBtn"><i class="fas fa-brain"></i> 生成结构化摘要</button>
+<button class="btn btn-secondary" id="aiEnhanceBtn" disabled><i class="fas fa-magic"></i> AI增强摘要</button>
+<button class="btn btn-ghost" id="clearBtn"><i class="fas fa-eraser"></i> 清空</button>
+</div>
+<div class="error-msg" id="errorMsg"></div>
+</div>
+
+<div class="status-bar" id="statusBar">
+<div class="spinner"></div>
+<span id="statusText">正在分析论文...</span>
+</div>
+
+<div class="result-section" id="resultSection">
+<h2 style="color:var(--accent);display:flex;align-items:center;gap:10px;font-size:1.15rem">
+<i class="fas fa-flask"></i> 结构化摘要
+</h2>
+<div class="result-grid" id="resultGrid"></div>
+<div class="stats-line" id="statsLine"></div>
+<div class="action-bar">
+<button class="btn btn-ghost" id="copyBtn"><i class="fas fa-copy"></i> 复制结果</button>
+<button class="btn btn-ghost" id="downloadBtn"><i class="fas fa-download"></i> 下载Markdown</button>
+</div>
+</div>
+
+<footer>
+密心 (Meseeing) · knowledge-juice ❤️
+</footer>
+</div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+const STOP_WORDS = new Set([
+'的','了','在','是','我','有','和','就','不','人','都','一','一个','上','也','很','到',
+'说','要','去','你','会','着','没有','看','好','自己','这','他','她','它','们','那',
+'又','被','比','从','为','以','及','与','而','但','或','过','对','等','能','将',
+'其','之','所','如','被','让','向','往','用','于','由','因为','所以','但是','如果',
+'虽然','然而','而且','并且','或者','不仅','还是','只是','但是','因此','此外',
+'that','this','these','those','the','a','an','and','or','but','in','on','at','of',
+'to','for','with','by','from','as','is','are','was','were','be','been','being',
+'have','has','had','do','does','did','will','would','can','could','may','might',
+'shall','should','its','it','we','our','they','them','their','you','your',
+'about','into','through','during','before','after','above','below','between',
+'under','again','further','then','once','here','there','when','where','why',
+'how','all','each','every','both','few','more','most','some','any','no','not',
+'only','own','same','so','than','too','very','just','because','since','until',
+'while','which','who','whom','what','whether','although','though','if','else'
+]);
+
+const SECTION_PATTERNS = [
+{regex:/^abstract/i,label:'摘要'},
+{regex:/^introduction/i,label:'引言'},
+{regex:/^related\s*work/i,label:'相关工作'},
+{regex:/^method/i,label:'方法'},
+{regex:/^methodology/i,label:'方法'},
+{regex:/^approach/i,label:'方法'},
+{regex:/^proposed/i,label:'方法'},
+{regex:/^experiment/i,label:'实验'},
+{regex:/^result/i,label:'结果'},
+{regex:/^discussion/i,label:'讨论'},
+{regex:/^conclusion/i,label:'结论'},
+{regex:/^limitation/i,label:'局限性'},
+{regex:/^reference/i,label:'参考文献'}
+];
+
+function smartChunk(text, maxChars) {
+maxChars = maxChars || 4000;
+if (!text || !text.trim()) return [];
+const paragraphs = text.split(/\n\s*\n/).map(p => p.trim()).filter(p => p.length > 0);
+const chunks = [];
+let current = '';
+for (let para of paragraphs) {
+if (para.length > maxChars) {
+if (current) { chunks.push(current); current = ''; }
+const sents = para.split(/(?<=[。.!?！？\n])/);
+for (let sent of sents) {
+if (!sent.trim()) continue;
+if (current.length + sent.length + 1 > maxChars) {
+if (current.trim()) chunks.push(current.trim());
+current = sent;
+} else {
+current += (current ? '\n' : '') + sent;
+}
+}
+} else if (current.length + para.length + 1 > maxChars) {
+if (current.trim()) chunks.push(current.trim());
+current = para;
+} else {
+current += (current ? '\n\n' : '') + para;
+}
+}
+if (current.trim()) chunks.push(current.trim());
+return chunks;
+}
+
+function tokenize(text) {
+const tokens = [];
+const cleaned = text.replace(/[^a-zA-Z\u4e00-\u9fff0-9\s-]/g,' ');
+const parts = cleaned.split(/\s+/);
+for (let p of parts) {
+if (!p) continue;
+if (/[\u4e00-\u9fff]/.test(p)) {
+let i=0;
+while(i<p.length){
+if(/[\u4e00-\u9fff]/.test(p[i])){
+let j=i;
+while(j<p.length&&/[\u4e00-\u9fff]/.test(p[j]))j++;
+if(j-i>=2)tokens.push(p.substring(i,j));
+i=j;
+}else{i++;}
+}
+} else {
+const lower = p.toLowerCase();
+if(lower.length>=2)tokens.push(lower);
+}
+}
+return tokens;
+}
+
+function extractKeywords(text, topN) {
+topN = topN || 10;
+const tokens = tokenize(text);
+const freq = {};
+for (let t of tokens) {
+if (STOP_WORDS.has(t)) continue;
+if (t.length < 2) continue;
+freq[t] = (freq[t]||0)+1;
+}
+return Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,topN).map(e=>e[0]);
+}
+
+function detectSections(text) {
+const lines = text.split('\n');
+const sections = {};
+let currentLabel = '正文';
+sections[currentLabel] = {start:0,end:0,text:''};
+for (let i=0;i<lines.length;i++){
+const line=lines[i].trim();
+for(let pat of SECTION_PATTERNS){
+if(pat.regex.test(line)){
+currentLabel=pat.label;
+sections[currentLabel]={start:i,end:i,text:''};
+break;
+}
+}
+if(sections[currentLabel]) sections[currentLabel].end=i;
+}
+const keys=Object.keys(sections);
+for(let i=0;i<keys.length;i++){
+const key=keys[i];
+const start=sections[key].start;
+const end=(i<keys.length-1)?sections[keys[i+1]].start:lines.length;
+sections[key].text=lines.slice(start,end).join('\n').trim();
+}
+return sections;
+}
+
+function extractCoreSentences(text, keywords, topN) {
+topN = topN || 10;
+const sents = text.split(/(?<=[。.!?！？\n])/).map(s=>s.trim()).filter(s=>s.length>15);
+const scored = sents.map((s,i)=>{
+let score = 0;
+score += Math.max(0, 1 - i * 0.01);
+const kwCount = keywords.filter(k=>s.toLowerCase().includes(k.toLowerCase())).length;
+score += kwCount * 3;
+const secNames = ['abstract','introduction','conclusion','result','method'];
+for(let sn of secNames){
+if(s.toLowerCase().includes(sn)) score += 2;
+}
+if(s.length > 30 && s.length < 300) score += 1;
+const triggerWords = ['we propose','we present','we show','we find','our method',
+'our approach','experimental result','state-of-the-art','sota',
+'显著','提出','实验结果表明','我们发现','实验证明','结果表明'];
+for(let tw of triggerWords){
+if(s.toLowerCase().includes(tw)) score += 5;
+}
+return {text:s, score};
+});
+return scored.sort((a,b)=>b.score-a.score).slice(0,topN).map(s=>s.text);
+}
+
+function analyzePaper(text) {
+const chunks = smartChunk(text);
+const allKeywords = extractKeywords(text, 15);
+const sections = detectSections(text);
+const coreSentences = extractCoreSentences(text, allKeywords, 8);
+
+const result = {
+summary: '',
+researchProblem: '',
+methodology: '',
+findings: '',
+dataset: '',
+limitations: '',
+keywords: allKeywords.slice(0,10)
+};
+
+if(coreSentences.length > 0){
+result.summary = coreSentences.slice(0,2).join(' ');
+} else {
+result.summary = text.slice(0,150) + '...';
+}
+
+const introText = (sections['摘要']||sections['引言']||{text:text.slice(0,2000)}).text;
+const problemPatterns = ['research problem','research question','problem statement',
+'we address','we tackle','challenge is','问题在于','研究问题','解决','针对','旨在'];
+let problemText = '';
+for(let sent of introText.split(/[。.!?！？\n]/)){
+for(let pat of problemPatterns){
+if(sent.toLowerCase().includes(pat)){
+problemText += sent.trim() + '; ';
+break;
+}
+}
+}
+result.researchProblem = problemText || (introText.slice(0,300)) || '未明确提及，请查看原文。';
+
+const methodText = (sections['方法']||{text:text}).text;
+const methodSents = methodText.split(/[。.!?！？\n]/).filter(s=>s.length>20);
+result.methodology = methodSents.slice(0,5).join('; ') || '方法章节未清晰识别，请参考原文。';
+
+const resultSections = ['结果','结论','实验','讨论'];
+let findingsText = '';
+for(let rs of resultSections){
+if(sections[rs]) findingsText += sections[rs].text + ' ';
+}
+if(!findingsText) findingsText = text;
+const findingSents = findingsText.split(/[。.!?！？\n]/).filter(s=>{
+return allKeywords.some(k=>s.includes(k)) && s.length>20;
+});
+result.findings = findingSents.slice(0,4).join('; ') || (coreSentences.slice(2,5).join(' ')) || '请参考原文的实验结果部分。';
+
+const dsPatterns = ['dataset','data set','corpus','benchmark','data来自','数据集','使用.*数据','采用.*数据'];
+let dsText = '';
+const fullSents = text.split(/[。.!?！？\n]/);
+for(let sent of fullSents){
+for(let pat of dsPatterns){
+if(sent.toLowerCase().includes(pat) && sent.length < 300){
+dsText += sent.trim() + '; ';
+break;
+}
+}
+}
+result.dataset = dsText || '未明确提及数据集。';
+
+const limPatterns = ['limitation','limitations','limit','drawback','weakness',
+'future work','局限性','不足','缺陷','未来工作'];
+let limText = '';
+for(let sent of fullSents){
+for(let pat of limPatterns){
+if(sent.toLowerCase().includes(pat) && sent.length < 300){
+limText += sent.trim() + '; ';
+break;
+}
+}
+}
+result.limitations = limText || '未明确提及局限性。';
+
+return result;
+}
+
+function renderResult(result) {
+const grid = document.getElementById('resultGrid');
+const fields = [
+{icon:'📌',label:'一句话总结',key:'summary',full:true},
+{icon:'🎯',label:'研究问题',key:'researchProblem',full:false},
+{icon:'⚙️',label:'方法论',key:'methodology',full:false},
+{icon:'📊',label:'主要发现',key:'findings',full:false},
+{icon:'🗂️',label:'数据集',key:'dataset',full:false},
+{icon:'⚠️',label:'局限性',key:'limitations',full:false},
+{icon:'🏷️',label:'关键词',key:'keywords',full:true,isKeywords:true}
+];
+let html = '';
+for(let f of fields){
+const val = result[f.key];
+if(f.isKeywords){
+const kwArr = Array.isArray(val) ? val : (typeof val === 'string' ? val.split(/[,，、]/).map(s=>s.trim()).filter(Boolean) : []);
+const tags = kwArr.map(function(k){return '<span class="keyword-tag">'+k+'</span>';}).join('');
+html += '<div class="result-card full"><div class="label">'+f.icon+' '+f.label+'</div><div class="content keywords">'+tags+'</div></div>';
+} else {
+const displayVal = val || '未提取到相关信息。';
+const cls = f.full ? 'result-card full' : 'result-card';
+html += '<div class="'+cls+'"><div class="label">'+f.icon+' '+f.label+'</div><div class="content">'+displayVal+'</div></div>';
+}
+}
+grid.innerHTML = html;
+document.getElementById('resultSection').classList.add('show');
+document.getElementById('statsLine').textContent = '📊 '+(result.keywords?result.keywords.length:0)+'个关键词 · '+(result.summary?result.summary.length:0)+'字一句话总结';
+window._lastResult = result;
+}
+
+function getMarkdown(result) {
+let md = '# 论文结构化摘要\n\n';
+md += '## 📌 一句话总结\n'+(result.summary||'无')+'\n\n';
+md += '## 🎯 研究问题\n'+(result.researchProblem||'无')+'\n\n';
+md += '## ⚙️ 方法论\n'+(result.methodology||'无')+'\n\n';
+md += '## 📊 主要发现\n'+(result.findings||'无')+'\n\n';
+md += '## 🗂️ 数据集\n'+(result.dataset||'无')+'\n\n';
+md += '## ⚠️ 局限性\n'+(result.limitations||'无')+'\n\n';
+const kws = Array.isArray(result.keywords) ? result.keywords.join(', ') : (result.keywords||'无');
+md += '## 🏷️ 关键词\n'+kws+'\n\n';
+md += '---\n*由 密心 (Meseeing) · knowledge-juice 论文速读器生成*\n';
+return md;
+}
+
+document.getElementById('copyBtn').addEventListener('click',function(){
+if(!window._lastResult)return;
+const md=getMarkdown(window._lastResult);
+navigator.clipboard.writeText(md).then(()=>{
+const btn=this;
+const orig=btn.innerHTML;
+btn.innerHTML='<i class="fas fa-check"></i> 已复制';
+setTimeout(()=>btn.innerHTML=orig,2000);
+}).catch(()=>{
+const ta=document.createElement('textarea');
+ta.value=md;
+document.body.appendChild(ta);
+ta.select();
+document.execCommand('copy');
+document.body.removeChild(ta);
+const btn=this;
+const orig=btn.innerHTML;
+btn.innerHTML='<i class="fas fa-check"></i> 已复制';
+setTimeout(()=>btn.innerHTML=orig,2000);
+});
+});
+
+document.getElementById('downloadBtn').addEventListener('click',function(){
+if(!window._lastResult)return;
+const md=getMarkdown(window._lastResult);
+const blob=new Blob([md],{type:'text/markdown;charset=utf-8'});
+const url=URL.createObjectURL(blob);
+const a=document.createElement('a');
+a.href=url;
+a.download='paper-summary.md';
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
+URL.revokeObjectURL(url);
+});
+
+document.getElementById('pdfUpload').addEventListener('change',async function(e){
+const file=this.files[0];
+if(!file)return;
+document.getElementById('fileInfo').textContent='📄 '+file.name+' ('+(file.size/1024).toFixed(0)+'KB)';
+document.getElementById('statusBar').classList.add('show');
+document.getElementById('statusText').textContent='正在提取PDF文本...';
+try{
+const arrBuf=await file.arrayBuffer();
+const pdf=await pdfjsLib.getDocument({data:arrBuf}).promise;
+let fullText='';
+for(let i=1;i<=pdf.numPages;i++){
+const page=await pdf.getPage(i);
+const content=await page.getTextContent();
+const pageText=content.items.map(s=>s.str).join(' ');
+fullText+='--- 第'+i+'页 ---\n'+pageText+'\n\n';
+}
+document.getElementById('paperInput').value=fullText;
+document.getElementById('fileInfo').textContent='📄 '+file.name+' - 已提取'+pdf.numPages+'页，'+fullText.length+'字符';
+document.getElementById('statusBar').classList.remove('show');
+}catch(err){
+document.getElementById('statusBar').classList.remove('show');
+document.getElementById('errorMsg').textContent='❌ PDF解析失败: '+err.message;
+document.getElementById('errorMsg').classList.add('show');
+}
+this.value='';
+});
+
+document.getElementById('apiKeyInput').addEventListener('input',function(){
+const key=this.value.trim();
+document.getElementById('aiEnhanceBtn').disabled=!key.startsWith('sk-');
+});
+
+async function aiSummarize(text,apiKey){
+const chunks=smartChunk(text);
+const summaries=[];
+const statusText=document.getElementById('statusText');
+for(let i=0;i<chunks.length;i++){
+statusText.textContent='AI分析中 '+(i+1)+'/'+chunks.length+'...';
+try{
+const resp=await fetch('https://api.openai.com/v1/chat/completions',{
+method:'POST',
+headers:{
+'Content-Type':'application/json',
+'Authorization':'Bearer '+apiKey
+},
+body:JSON.stringify({
+model:'gpt-4o-mini',
+messages:[
+{role:'system',content:'你是顶级的论文分析助手。从论文片段提取结构化信息，输出JSON格式。'},
+{role:'user',content:'请分析以下论文片段，输出JSON格式包含：summary(一句话总结), researchProblem(研究问题), methodology(方法论), findings(主要发现), dataset(数据集), limitations(局限性), keywords(关键词数组)。\n\n论文片段：\n'+chunks[i].slice(0,3000)}
+],
+temperature:0.1,
+max_tokens:1000
+})
+});
+const data=await resp.json();
+if(data.choices&&data.choices[0]){
+summaries.push(data.choices[0].message.content);
+}else{
+throw new Error(data.error?.message||'API返回异常');
+}
+}catch(err){
+return null;
+}
+}
+statusText.textContent='正在合并AI摘要...';
+try{
+const resp=await fetch('https://api.openai.com/v1/chat/completions',{
+method:'POST',
+headers:{
+'Content-Type':'application/json',
+'Authorization':'Bearer '+apiKey
+},
+body:JSON.stringify({
+model:'gpt-4o-mini',
+messages:[
+{role:'system',content:'你是专业的论文摘要合并专家。将多个片段摘要合并为一份完整结构化的论文摘要，严格输出JSON格式。'},
+{role:'user',content:'合并以下各片段摘要为一份完整论文摘要。输出JSON包含：summary, researchProblem, methodology, findings, dataset, limitations, keywords(数组)。\n\n'+summaries.join('\n---\n')}
+],
+temperature:0.1,
+max_tokens:1500
+})
+});
+const data=await resp.json();
+if(data.choices&&data.choices[0]){
+const content=data.choices[0].message.content;
+const jsonMatch=content.match(/\{[\s\S]*\}/);
+if(jsonMatch) return JSON.parse(jsonMatch[0]);
+return JSON.parse(content);
+}
+}catch(err){
+return null;
+}
+return null;
+}
+
+document.getElementById('analyzeBtn').addEventListener('click',function(){
+const text=document.getElementById('paperInput').value.trim();
+if(!text){
+document.getElementById('errorMsg').textContent='⚠️ 请先粘贴论文内容或上传PDF';
+document.getElementById('errorMsg').classList.add('show');
+return;
+}
+document.getElementById('errorMsg').classList.remove('show');
+document.getElementById('statusBar').classList.add('show');
+document.getElementById('statusText').textContent='正在分析论文（纯本地模式）...';
+this.disabled=true;
+setTimeout(()=>{
+try{
+const result=analyzePaper(text);
+renderResult(result);
+document.getElementById('statusBar').classList.remove('show');
+document.getElementById('errorMsg').classList.remove('show');
+}catch(err){
+document.getElementById('statusBar').classList.remove('show');
+document.getElementById('errorMsg').textContent='❌ 分析出错: '+err.message;
+document.getElementById('errorMsg').classList.add('show');
+}
+this.disabled=false;
+},100);
+});
+
+document.getElementById('aiEnhanceBtn').addEventListener('click',async function(){
+const text=document.getElementById('paperInput').value.trim();
+const apiKey=document.getElementById('apiKeyInput').value.trim();
+if(!text){
+document.getElementById('errorMsg').textContent='⚠️ 请先粘贴论文内容或上传PDF';
+document.getElementById('errorMsg').classList.add('show');
+return;
+}
+if(!apiKey||!apiKey.startsWith('sk-')){
+document.getElementById('errorMsg').textContent='⚠️ 请先填入有效的OpenAI API Key';
+document.getElementById('errorMsg').classList.add('show');
+return;
+}
+document.getElementById('errorMsg').classList.remove('show');
+document.getElementById('statusBar').classList.add('show');
+document.getElementById('statusText').textContent='正在调用AI分析...';
+this.disabled=true;
+document.getElementById('analyzeBtn').disabled=true;
+try{
+const aiResult=await aiSummarize(text,apiKey);
+if(aiResult){
+renderResult(aiResult);
+document.getElementById('statusText').textContent='✅ AI增强摘要完成！';
+}else{
+const result=analyzePaper(text);
+renderResult(result);
+document.getElementById('statusText').textContent='⚠️ AI调用失败，已回退到本地模式';
+}
+setTimeout(()=>{document.getElementById('statusBar').classList.remove('show');},2000);
+}catch(err){
+const result=analyzePaper(text);
+renderResult(result);
+document.getElementById('statusText').textContent='⚠️ AI调用失败，已回退到本地模式';
+setTimeout(()=>{document.getElementById('statusBar').classList.remove('show');},2000);
+}
+this.disabled=false;
+document.getElementById('analyzeBtn').disabled=false;
+});
+
+document.getElementById('clearBtn').addEventListener('click',function(){
+document.getElementById('paperInput').value='';
+document.getElementById('fileInfo').textContent='';
+document.getElementById('apiKeyInput').value='';
+document.getElementById('errorMsg').classList.remove('show');
+document.getElementById('resultSection').classList.remove('show');
+document.getElementById('statusBar').classList.remove('show');
+document.getElementById('aiEnhanceBtn').disabled=true;
+window._lastResult=null;
+});
+console.log('📄 论文速读器已加载 — 密心 (Meseeing) · knowledge-juice');
+</script>
+</body>
+</html>
