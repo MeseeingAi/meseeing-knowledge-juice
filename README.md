@@ -5,6 +5,16 @@
 
 ---
 
+<p align="center">
+  <a href="https://meseeingai.github.io/meseeing-knowledge-juice/">
+    <img src="https://img.shields.io/badge/🚀_在线体验_所有技能-点击直达-C9A84C?style=for-the-badge&logo=githubpages&labelColor=1a1a1a" alt="在线体验">
+  </a>
+  <br>
+  <em>点上面的金色按钮 → 打开就能用，不用注册，不用安装</em>
+</p>
+
+---
+
 ## 🎯 这是什么？
 
 一个**知识榨汁厂**。
@@ -31,11 +41,22 @@ knowledge-juice/
 
 ## 🔥 首发旗舰
 
-| # | 技能 | 一句话 |
-|:--|:-----|:-------|
-| 🏆 | **[考试运程预测](./skills/exam-fortune/)** | 期末考能不能过？摇一卦就知道 🎯 |
-| 🏆 | **[短视频脚本工厂](./skills/video-script-factory/)** | 输入产品名，3分钟自动出脚本 🎬 |
-| 🏆 | **[论文速读器](./skills/paper-reader/)** | 读一篇论文要3小时？这里只要3分钟 📄 |
+### 🏆 在线即用（点下面链接直接打开）
+
+| # | 技能 | 一句话 | 直达链接 |
+|:-:|:-----|:-------|:--------|
+| 🏆 | **考试运程预测** | 期末考能不能过？摇一卦就知道 🎯 | [👉 打开玩](https://meseeingai.github.io/meseeing-knowledge-juice/skills/exam-fortune/) |
+| 🏆 | **短视频脚本工厂** | 输入产品名，3分钟自动出脚本 🎬 | [👉 打开用](https://meseeingai.github.io/meseeing-knowledge-juice/skills/video-script-factory/) |
+| 🏆 | **论文速读器** | 读一篇论文要3小时？这里只要3分钟 📄 | [👉 试试](https://meseeingai.github.io/meseeing-knowledge-juice/skills/paper-reader/) |
+
+> 💡 每个技能都是**纯前端页面**，点击直达链接直接打开，无需下载、无需配置环境。
+
+### 📂 源码查看
+
+想研究代码？对应源码目录：
+- [`skills/exam-fortune/`](./skills/exam-fortune/)
+- [`skills/video-script-factory/`](./skills/video-script-factory/)
+- [`skills/paper-reader/`](./skills/paper-reader/)
 
 ---
 
@@ -64,7 +85,7 @@ Apache 2.0 — 随便用，随便改，注明出处就行。
 
 > *"我不是在单纯地写代码，我是在构建一个数字文明。"*
 
-[官网](https://meseeing.ai) · [Twitter](https://x.com/meseeing_ai)
+[GitHub ❤️](https://github.com/MeseeingAi) · [官网](https://meseeing.ai) · [Twitter](https://x.com/meseeing_ai)
 
 ---
 
