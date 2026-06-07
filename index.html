@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧠 Knowledge Juice — 知识榨汁厂</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #0d0d0d;
+  --card-bg: #1a1a1a;
+  --border: #2a2a2a;
+  --accent: #C9A84C;
+  --accent2: #B22222;
+  --text: #e0dcd0;
+  --text-dim: #888;
+  --gold: #C9A84C;
+  --gold-light: #FFD700;
+}
+body {
+  font-family: 'Noto Serif SC', 'ZCOOL XiaoWei', serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 60px 24px 80px;
+}
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+.logo {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+h1 {
+  font-size: 2.4rem;
+  font-weight: 900;
+  letter-spacing: 6px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.tagline {
+  color: var(--text-dim);
+  font-size: 1rem;
+  margin-top: 8px;
+  letter-spacing: 2px;
+}
+.tagline span {
+  color: var(--accent2);
+}
+/* Skills Grid */
+.skills-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.skill-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  display: block;
+  text-decoration: none;
+  color: var(--text);
+}
+.skill-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--gold), var(--accent2));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.skill-card:hover {
+  border-color: var(--gold);
+  transform: translateX(8px);
+  box-shadow: 0 0 30px rgba(201,168,76,0.08);
+}
+.skill-card:hover::before {
+  opacity: 1;
+}
+.card-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+.badge-ready {
+  background: rgba(201,168,76,0.15);
+  color: var(--gold);
+  border: 1px solid rgba(201,168,76,0.3);
+}
+.badge-wip {
+  background: rgba(178,34,34,0.15);
+  color: var(--accent2);
+  border: 1px solid rgba(178,34,34,0.3);
+}
+.card-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  letter-spacing: 2px;
+}
+.card-desc {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+.card-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+.card-meta i {
+  width: 16px;
+  color: var(--gold);
+  margin-right: 4px;
+}
+/* Divider */
+.section-divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 50px 0;
+  opacity: 0.3;
+}
+/* About section */
+.about {
+  text-align: center;
+  padding: 20px 0;
+}
+.about h3 {
+  font-size: 1.2rem;
+  color: var(--gold);
+  margin-bottom: 12px;
+  letter-spacing: 3px;
+}
+.about p {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  line-height: 1.8;
+  max-width: 500px;
+  margin: 0 auto;
+}
+.footer {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+.footer .brand {
+  color: var(--accent2);
+  font-weight: 700;
+}
+/* Responsive */
+@media (max-width: 600px) {
+  .container { padding: 40px 16px 60px; }
+  h1 { font-size: 1.8rem; }
+  .skill-card { padding: 24px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo">🧠</div>
+    <h1>知识榨汁厂</h1>
+    <p class="tagline">把最前沿的 AI 知识 + 最古老的人类智慧<br><span>榨成你打开就能用的「技能」</span></p>
+  </div>
+
+  <div class="skills-grid">
+    <!-- Skill 1: Exam Fortune -->
+    <a href="./skills/exam-fortune/" class="skill-card">
+      <span class="card-badge badge-ready"><i class="fa-solid fa-bolt"></i> 在线可用</span>
+      <div class="card-icon">🔮</div>
+      <div class="card-title">考试运程预测</div>
+      <div class="card-desc">
+        期末考能不能过？摇一卦就知道。输入科目和日期，周易卦象为你指点迷津。
+        纯前端、零等待、一键分享。
+      </div>
+      <div class="card-meta">
+        <span><i class="fa-solid fa-file"></i> 纯前端 · 即开即用</span>
+        <span><i class="fa-regular fa-clock"></i> 1分钟出结果</span>
+      </div>
+    </a>
+
+    <!-- Skill 2: Video Script Factory -->
+    <a href="./skills/video-script-factory/" class="skill-card">
+      <span class="card-badge badge-wip"><i class="fa-solid fa-hammer"></i> 纯前端重构中</span>
+      <div class="card-icon">🎬</div>
+      <div class="card-title">短视频脚本工厂</div>
+      <div class="card-desc">
+        输入产品名，3分钟自动出脚本。分镜、台词、运镜一条龙。
+        目前为 Python 版本，纯前端版即将上线。
+      </div>
+      <div class="card-meta">
+        <span><i class="fa-solid fa-file"></i> Python → HTML 迁移中</span>
+        <span><i class="fa-regular fa-clock"></i> 预计 2 天</span>
+      </div>
+    </a>
+
+    <!-- Skill 3: Paper Reader -->
+    <a href="./skills/paper-reader/" class="skill-card">
+      <span class="card-badge badge-wip"><i class="fa-solid fa-hammer"></i> 纯前端重构中</span>
+      <div class="card-icon">📄</div>
+      <div class="card-title">论文速读器</div>
+      <div class="card-desc">
+        读一篇论文要3小时？这里只要3分钟。核心观点、方法论、实验结果一键提炼。
+        目前为 Python 版本，纯前端版即将上线。
+      </div>
+      <div class="card-meta">
+        <span><i class="fa-solid fa-file"></i> Python → HTML 迁移中</span>
+        <span><i class="fa-regular fa-clock"></i> 预计 2 天</span>
+      </div>
+    </a>
+  </div>
+
+  <hr class="section-divider">
+
+  <div class="about">
+    <h3>🧪 榨汁哲学</h3>
+    <p>
+      我们不搬运论文，不写学术综述，不做 Agent 框架教程。<br>
+      我们只做一件事——<strong>让你打开就能用</strong>。
+    </p>
+  </div>
+
+  <div class="footer">
+    <p>— <span class="brand">密心 (Meseeing)</span> · knowledge-juice ❤️</p>
+  </div>
+</div>
+</body>
+</html>
