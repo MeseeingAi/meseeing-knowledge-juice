@@ -481,17 +481,8 @@
       <!-- 表单 -->
       <div class="glass-card flex-col gap-12">
         <div class="form-group">
-          <label for="schoolSelect">🏫 就读学校</label>
-          <select id="schoolSelect">
-            <option value="">— 请选择学校 —</option>
-            <option value="北京市第四中学">北京市第四中学</option>
-            <option value="上海市实验学校">上海市实验学校</option>
-            <option value="深圳中学">深圳中学</option>
-            <option value="成都七中">成都七中</option>
-            <option value="华中师大一附中">华中师大一附中</option>
-            <option value="长沙雅礼中学">长沙雅礼中学</option>
-            <option value="其他">其他</option>
-          </select>
+          <label for="schoolInput">🏫 就读学校</label>
+          <input type="text" id="schoolInput" placeholder="请完整填写学校名称" maxlength="50">
         </div>
 
         <div class="form-group">
@@ -511,7 +502,7 @@
       <div class="deco-symbols" style="margin-top:-4px;">䷀ ䷁ ䷂ ䷃ ䷄ ䷅</div>
     </div>
 
-    <!-- ==================== 2. 先验预测页 ==================== -->
+    <!-- ==================== 2. 模考猜分断相页 ==================== -->
     <div id="page-mock" class="page">
       <div class="glass-card flex-col" style="gap:16px;">
         <div class="hexagram-display">
@@ -521,8 +512,9 @@
         </div>
 
         <div class="prediction-result">
-          你的模拟考成绩可能在<br>
-          <span class="highlight">【540 — 570】</span> 之间
+          <div style="font-size:0.75rem;color:rgba(201,169,78,0.5);margin-bottom:4px;letter-spacing:1px;">密心Ai · 模考成绩猜分断相</div>
+          你的成绩区间<br>
+          <span class="highlight">【540 — 570】</span>
         </div>
 
         <div class="oracle-text">
@@ -996,10 +988,10 @@ function pageShow(pageId) {
 
 // ===== 启卦 =====
 function startDivination() {
-  var school = document.getElementById('schoolSelect').value;
+  var school = document.getElementById('schoolInput').value.trim();
   var studentId = document.getElementById('studentId').value.trim();
 
-  if (!school) { alert('请选择你的学校'); return; }
+  if (!school) { alert('请完整填写学校名称'); return; }
   if (!studentId) { alert('请输入学号/准考证号'); return; }
 
   appState.school = school;
@@ -1150,7 +1142,7 @@ function drawShareCard(result) {
   // Prediction text
   ctx.fillStyle = 'rgba(224, 213, 192, 0.7)';
   ctx.font = '13px "Noto Serif SC", "SimSun", serif';
-  ctx.fillText('密心Ai · 模拟考成绩预测', w / 2, 215);
+  ctx.fillText('密心Ai · 模考成绩猜分断相', w / 2, 215);
 
   ctx.fillStyle = '#c9a94e';
   ctx.font = 'bold 28px "Noto Serif SC", "SimSun", serif';

@@ -45,7 +45,7 @@ knowledge-juice/
 
 | # | 技能 | 一句话 | 直达链接 |
 |:-:|:-----|:-------|:--------|
-| 🏆 | **高考天机预测站** 🔥 | 先验模考·后验高考——高岛易断古法卦象，两步裂变预测 🎋 | [👉 打开玩](https://meseeingai.github.io/meseeing-knowledge-juice/skills/gaokao-prediction/) |
+| 🏆 | **高考天机预测站** 🔥 | 模考猜分·后验推演——高岛易断古法卦象，两步裂变传播 🎋 | [👉 打开玩](https://meseeingai.github.io/meseeing-knowledge-juice/skills/gaokao-prediction/) |
 | 🏆 | **考试运程预测** | 期末考能不能过？摇一卦就知道 🎯 | [👉 打开玩](https://meseeingai.github.io/meseeing-knowledge-juice/skills/exam-fortune/) |
 | 🏆 | **短视频脚本工厂** | 输入产品名，3分钟自动出脚本 🎬 | [👉 打开用](https://meseeingai.github.io/meseeing-knowledge-juice/skills/video-script-factory/) |
 | 🏆 | **论文速读器** | 读一篇论文要3小时？这里只要3分钟 📄 | [👉 试试](https://meseeingai.github.io/meseeing-knowledge-juice/skills/paper-reader/) |
