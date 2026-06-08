@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>密心Ai · 高考天机预测站</title>
+  <style>
+    /* ===== Reset & Base ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 16px; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', 'STSong', serif;
+      background: #0d0d1a;
+      color: #e0d5c0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ===== Mystical Starfield Background ===== */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(139, 0, 0, 0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(201, 169, 78, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(26, 26, 46, 0.6) 0%, transparent 70%),
+        radial-gradient(circle at 10% 10%, rgba(255,255,255,0.03) 1px, transparent 1px),
+        radial-gradient(circle at 30% 40%, rgba(255,255,255,0.02) 1px, transparent 1px),
+        radial-gradient(circle at 60% 15%, rgba(255,255,255,0.03) 1px, transparent 1px),
+        radial-gradient(circle at 80% 60%, rgba(255,255,255,0.02) 1px, transparent 1px),
+        radial-gradient(circle at 15% 80%, rgba(255,255,255,0.02) 1px, transparent 1px),
+        radial-gradient(circle at 90% 30%, rgba(255,255,255,0.03) 1px, transparent 1px),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.01) 1px, transparent 1px),
+        linear-gradient(135deg, #0d0d1a 0%, #1a1a2e 40%, #0d0d1a 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ===== Scrollbar ===== */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #0d0d1a; }
+    ::-webkit-scrollbar-thumb { background: #c9a94e; border-radius: 2px; }
+
+    /* ===== Layout Containers ===== */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== Page System ===== */
+    .page {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      transform: translateY(12px);
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+    }
+    .page.active {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== Glass Card ===== */
+    .glass-card {
+      background: rgba(26, 26, 46, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(201, 169, 78, 0.15);
+      border-radius: 16px;
+      padding: 20px 18px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    /* ===== Buttons ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: none;
+      outline: none;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn:active {
+      transform: scale(0.96);
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #c9a94e, #a8892e, #c9a94e);
+      background-size: 200% 200%;
+      color: #1a1a2e;
+      box-shadow: 0 4px 20px rgba(201, 169, 78, 0.3);
+    }
+    .btn-gold:hover { background-position: right center; box-shadow: 0 6px 28px rgba(201, 169, 78, 0.45); }
+    .btn-gold:active { box-shadow: 0 2px 10px rgba(201, 169, 78, 0.2); }
+
+    .btn-outline {
+      background: transparent;
+      color: #c9a94e;
+      border: 1.5px solid rgba(201, 169, 78, 0.5);
+    }
+    .btn-outline:hover { background: rgba(201, 169, 78, 0.08); border-color: #c9a94e; }
+    .btn-outline:active { background: rgba(201, 169, 78, 0.15); }
+
+    .btn-full { width: 100%; }
+    .btn-row {
+      display: flex;
+      gap: 12px;
+    }
+    .btn-row .btn { flex: 1; }
+
+    /* ===== Form Controls ===== */
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label {
+      font-size: 0.85rem;
+      color: rgba(201, 169, 78, 0.7);
+      letter-spacing: 1px;
+    }
+
+    select, input[type="text"] {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      background: rgba(26, 26, 46, 0.7);
+      border: 1px solid rgba(201, 169, 78, 0.2);
+      color: #e0d5c0;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c9a94e' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+    }
+    select:focus, input[type="text"]:focus {
+      border-color: #c9a94e;
+      box-shadow: 0 0 0 3px rgba(201, 169, 78, 0.12);
+    }
+    select option { background: #1a1a2e; color: #e0d5c0; }
+
+    /* ===== Welcome Page ===== */
+    #page-welcome {
+      justify-content: center;
+      gap: 24px;
+      padding-top: 20px;
+    }
+
+    /* --- Bagua / Trigram Decoration --- */
+    .bagua-top {
+      text-align: center;
+      font-size: 2.6rem;
+      color: rgba(201, 169, 78, 0.25);
+      line-height: 1.2;
+      letter-spacing: 8px;
+      margin-bottom: -8px;
+      user-select: none;
+    }
+    .bagua-top span { display: inline-block; animation: baguaGlow 6s ease-in-out infinite; }
+    .bagua-top span:nth-child(2) { animation-delay: 1s; }
+    .bagua-top span:nth-child(3) { animation-delay: 2s; }
+
+    @keyframes baguaGlow {
+      0%, 100% { opacity: 0.25; text-shadow: 0 0 4px transparent; }
+      50% { opacity: 0.6; text-shadow: 0 0 12px rgba(201, 169, 78, 0.3); }
+    }
+
+    .main-title {
+      text-align: center;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: #c9a94e;
+      letter-spacing: 4px;
+      text-shadow: 0 0 30px rgba(201, 169, 78, 0.15);
+      line-height: 1.3;
+    }
+    .main-title .sub {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: rgba(201, 169, 78, 0.6);
+      letter-spacing: 3px;
+      margin-top: 8px;
+    }
+
+    .deco-symbols {
+      text-align: center;
+      font-size: 1.2rem;
+      color: rgba(201, 169, 78, 0.15);
+      letter-spacing: 10px;
+      user-select: none;
+    }
+
+    .intro-text {
+      font-size: 0.8rem;
+      color: rgba(224, 213, 192, 0.5);
+      text-align: center;
+      line-height: 1.8;
+      letter-spacing: 0.5px;
+      padding: 0 4px;
+      border-top: 1px solid rgba(201, 169, 78, 0.1);
+      padding-top: 16px;
+      margin-top: 8px;
+    }
+
+    /* ===== Mock / Gaokao Prediction Pages ===== */
+    .hexagram-display {
+      text-align: center;
+      padding: 20px 0 10px;
+    }
+    .hexagram-symbol {
+      font-size: 4.5rem;
+      line-height: 1.2;
+      color: #c9a94e;
+      text-shadow: 0 0 40px rgba(201, 169, 78, 0.2);
+      margin-bottom: 4px;
+    }
+    .hexagram-name {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #c9a94e;
+      letter-spacing: 4px;
+    }
+    .hexagram-sub {
+      font-size: 0.8rem;
+      color: rgba(201, 169, 78, 0.5);
+      letter-spacing: 2px;
+      margin-top: 2px;
+    }
+
+    .prediction-result {
+      text-align: center;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #e0d5c0;
+      line-height: 1.5;
+    }
+    .prediction-result .highlight {
+      color: #c9a94e;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .oracle-text {
+      font-size: 0.88rem;
+      color: rgba(224, 213, 192, 0.7);
+      line-height: 1.9;
+      letter-spacing: 0.5px;
+      padding: 4px 0;
+      border-left: 2px solid rgba(201, 169, 78, 0.15);
+      padding-left: 14px;
+      margin: 4px 0;
+    }
+
+    .oracle-text strong {
+      color: rgba(201, 169, 78, 0.8);
+      font-weight: 600;
+    }
+
+    /* ===== Share Page ===== */
+    #page-share .share-title {
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #c9a94e;
+      letter-spacing: 2px;
+    }
+
+    .canvas-wrapper {
+      display: flex;
+      justify-content: center;
+      margin: 8px 0;
+    }
+    #shareCanvas {
+      width: 100%;
+      max-width: 320px;
+      height: auto;
+      aspect-ratio: 320 / 480;
+      border-radius: 12px;
+      border: 1px solid rgba(201, 169, 78, 0.15);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      background: #1a1a2e;
+    }
+
+    .copy-area {
+      background: rgba(26, 26, 46, 0.5);
+      border: 1px dashed rgba(201, 169, 78, 0.2);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.85rem;
+      color: rgba(224, 213, 192, 0.6);
+      line-height: 1.7;
+      text-align: center;
+      position: relative;
+      cursor: pointer;
+      transition: border-color 0.3s ease;
+    }
+    .copy-area:hover { border-color: rgba(201, 169, 78, 0.4); }
+    .copy-area.copied {
+      border-color: #c9a94e;
+      background: rgba(201, 169, 78, 0.08);
+    }
+    .copy-toast {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #c9a94e;
+      color: #1a1a2e;
+      padding: 4px 14px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      pointer-events: none;
+    }
+    .copy-area.copied .copy-toast {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== Destiny Page ===== */
+    .destiny-title {
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #c9a94e;
+      letter-spacing: 3px;
+    }
+
+    .destiny-card {
+      background: rgba(26, 26, 46, 0.5);
+      border: 1px solid rgba(201, 169, 78, 0.1);
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .destiny-card .card-label {
+      font-size: 0.75rem;
+      color: rgba(201, 169, 78, 0.5);
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .destiny-card .card-value {
+      font-size: 1.05rem;
+      color: #e0d5c0;
+      font-weight: 500;
+      line-height: 1.6;
+    }
+    .destiny-card .card-value .tag {
+      display: inline-block;
+      background: rgba(201, 169, 78, 0.1);
+      border: 1px solid rgba(201, 169, 78, 0.15);
+      border-radius: 6px;
+      padding: 2px 10px;
+      margin: 2px 4px 2px 0;
+      font-size: 0.9rem;
+    }
+
+    .lock-section {
+      text-align: center;
+      padding: 20px 0 12px;
+      border-top: 1px solid rgba(201, 169, 78, 0.1);
+    }
+    .lock-icon {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+    .lock-text {
+      font-size: 0.9rem;
+      color: rgba(224, 213, 192, 0.5);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .lock-text strong {
+      color: rgba(201, 169, 78, 0.6);
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 0.78rem;
+      color: rgba(201, 169, 78, 0.25);
+      letter-spacing: 2px;
+      padding: 20px 0 8px;
+    }
+
+    /* ===== Entry Link (Gaokao -> Destiny) ===== */
+    .entry-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px;
+      border-radius: 12px;
+      background: rgba(201, 169, 78, 0.06);
+      border: 1px solid rgba(201, 169, 78, 0.15);
+      color: #c9a94e;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-decoration: none;
+      font-family: inherit;
+    }
+    .entry-link:hover { background: rgba(201, 169, 78, 0.12); border-color: rgba(201, 169, 78, 0.3); }
+    .entry-link:active { transform: scale(0.97); }
+    .entry-link .arrow { font-size: 1.2rem; }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 380px) {
+      .container { padding: 16px 12px 32px; }
+      .main-title { font-size: 1.6rem; }
+      .hexagram-symbol { font-size: 3.6rem; }
+      .btn { padding: 12px 20px; font-size: 0.9rem; }
+      .glass-card { padding: 16px 14px; }
+    }
+
+    @media (min-width: 768px) {
+      .container { max-width: 520px; padding: 32px 24px 60px; }
+      .main-title { font-size: 2.2rem; }
+      .hexagram-symbol { font-size: 5.5rem; }
+    }
+
+    /* ===== Utility ===== */
+    .mt-8 { margin-top: 8px; }
+    .mt-16 { margin-top: 16px; }
+    .mb-8 { margin-bottom: 8px; }
+    .text-center { text-align: center; }
+    .gap-12 { gap: 12px; }
+    .flex-col { display: flex; flex-direction: column; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- ==================== 1. 首页 ==================== -->
+    <div id="page-welcome" class="page active">
+      <!-- 八卦装饰 -->
+      <div class="bagua-top">
+        <span>☰</span> <span>☷</span> <span>☳</span> <span>☵</span><br>
+        <span>☲</span> <span>☶</span> <span>☴</span> <span>☱</span>
+      </div>
+
+      <!-- 标题 -->
+      <div class="main-title">
+        密心Ai · 高考天机
+        <span class="sub">高岛易断 · 卦象推演 · 先验后验</span>
+      </div>
+
+      <!-- 装饰符 -->
+      <div class="deco-symbols">⚌ ⚏ ⚎ ⚍</div>
+
+      <!-- 表单 -->
+      <div class="glass-card flex-col gap-12">
+        <div class="form-group">
+          <label for="schoolSelect">🏫 就读学校</label>
+          <select id="schoolSelect">
+            <option value="">— 请选择学校 —</option>
+            <option value="北京市第四中学">北京市第四中学</option>
+            <option value="上海市实验学校">上海市实验学校</option>
+            <option value="深圳中学">深圳中学</option>
+            <option value="成都七中">成都七中</option>
+            <option value="华中师大一附中">华中师大一附中</option>
+            <option value="长沙雅礼中学">长沙雅礼中学</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="studentId">🔢 学号 / 准考证号</label>
+          <input type="text" id="studentId" placeholder="请输入学号/准考证号" maxlength="20">
+        </div>
+      </div>
+
+      <!-- 启卦按钮 -->
+      <button class="btn btn-gold btn-full" onclick="pageShow('page-mock')">⚡ 启卦问天</button>
+
+      <!-- 底部介绍 -->
+      <div class="intro-text">
+        高岛易断者，明治易圣高岛吞象氏所传。以卦象为镜，观天人之际，察吉凶之机。今密心Ai融其法于高考推演，先验后验，以卦启智。诚心叩问，卦不妄成。
+      </div>
+
+      <div class="deco-symbols" style="margin-top:-4px;">䷀ ䷁ ䷂ ䷃ ䷄ ䷅</div>
+    </div>
+
+    <!-- ==================== 2. 先验预测页 ==================== -->
+    <div id="page-mock" class="page">
+      <div class="glass-card flex-col" style="gap:16px;">
+        <div class="hexagram-display">
+          <div class="hexagram-symbol">䷶</div>
+          <div class="hexagram-name">雷火丰</div>
+          <div class="hexagram-sub">震上离下 · 丰盛光大</div>
+        </div>
+
+        <div class="prediction-result">
+          你的模拟考成绩可能在<br>
+          <span class="highlight">【540 — 570】</span> 之间
+        </div>
+
+        <div class="oracle-text">
+          <strong>卦辞：</strong>丰，亨，王假之，勿忧，宜日中。<br>
+          <strong>象曰：</strong>雷电皆至，丰。君子以折狱致刑。<br>
+          <strong>爻象：</strong>九四爻动，丰其蔀，日中见斗，遇其夷主，吉。<br>
+          日中见斗，明暗交替，恰似模考起伏。遇其夷主，得同道之助，终有吉兆。
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-gold" onclick="pageShow('page-share')">✓ 准了！继续 →</button>
+          <button class="btn btn-outline" onclick="pageShow('page-welcome')">↻ 再测一次</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 3. 分享页 ==================== -->
+    <div id="page-share" class="page">
+      <div class="share-title">🔮 分享给好友，解锁高考天机</div>
+
+      <div class="canvas-wrapper">
+        <canvas id="shareCanvas" width="320" height="480"></canvas>
+      </div>
+
+      <div class="copy-area" id="copyArea" onclick="copyShareText()">
+        <span class="copy-toast">✓ 已复制</span>
+        密心Ai用高岛易断卦象推演，猜中了我的模考成绩！🔮 来试试你的高考运势？
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="copyShareText()">📤 复制文案发朋友圈</button>
+        <button class="btn btn-gold" onclick="pageShow('page-gaokao')">✓ 已分享，查看高考预测</button>
+      </div>
+    </div>
+
+    <!-- ==================== 4. 后验预测页 ==================== -->
+    <div id="page-gaokao" class="page">
+      <div class="glass-card flex-col" style="gap:16px;">
+        <div class="hexagram-display">
+          <div class="hexagram-symbol">䷾</div>
+          <div class="hexagram-name">水火既济</div>
+          <div class="hexagram-sub">坎上离下 · 事已成</div>
+        </div>
+
+        <div class="prediction-result">
+          根据卦象推演，你的高考总分可能在<br>
+          <span class="highlight">【570 — 610】</span> 之间
+        </div>
+
+        <div class="oracle-text">
+          <strong>卦辞：</strong>既济，亨小，利贞。初吉终乱。<br>
+          <strong>象曰：</strong>水在火上，既济。君子以思患而豫防之。<br>
+          <strong>初九：</strong>曳其轮，濡其尾，无咎。——起步虽缓，根基稳固。<br>
+          <strong>六二：</strong>妇丧其茀，勿逐，七日得。——失而复得，不必焦虑。<br>
+          <strong>九五：</strong>东邻杀牛，不如西邻之禴祭，实受其福。——诚心胜于浮华，踏实终得善果。<br>
+          卦象既济而戒初吉终乱，劝君临考守心，慎终如始。水火相济，文理兼融，此乃大成之象。
+        </div>
+
+        <button class="entry-link" onclick="pageShow('page-destiny')">
+          查看孩子的完整人生命盘 <span class="arrow">▶</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ==================== 5. 专属主页 ==================== -->
+    <div id="page-destiny" class="page">
+      <div class="destiny-title">密心Ai · 人生命盘</div>
+
+      <!-- 卡片1：专业方向 -->
+      <div class="destiny-card">
+        <div class="card-label">📚 专业方向</div>
+        <div class="card-value">
+          <span class="tag">计算机科学与技术</span>
+          <span class="tag">金融数学</span>
+          <span class="tag">电子信息工程</span>
+        </div>
+      </div>
+
+      <!-- 卡片2：适合城市 -->
+      <div class="destiny-card">
+        <div class="card-label">🏙️ 适合城市</div>
+        <div class="card-value">
+          <span class="tag">北京</span>
+          <span class="tag">杭州</span>
+        </div>
+      </div>
+
+      <!-- 卡片3：职业倾向 -->
+      <div class="destiny-card">
+        <div class="card-label">💼 职业倾向</div>
+        <div class="card-value">
+          <span class="tag">算法工程师</span>
+          <span class="tag">量化分析师</span>
+        </div>
+      </div>
+
+      <!-- 锁定区域 -->
+      <div class="lock-section">
+        <div class="lock-icon">🔒</div>
+        <div class="lock-text">
+          <strong>完整命盘：</strong>含十年大运 · 流年卦象 · 深度人生规划
+        </div>
+        <button class="btn btn-gold btn-full">解锁完整命盘 ¥29.9</button>
+      </div>
+
+      <div class="footer-note">密心Ai · 得见未来 ❤️</div>
+    </div>
+
+  </div>
+
+<script>
+/* ============================================================
+ *  高岛易断 · 卦象预测引擎 v1.0
+ *  考试 / 功名 / 学业 专用模块
+ *  确定性伪随机 · 同一学号每次结果一致
+ *  半文言卦辞 · 不明觉厉
+ * ============================================================ */
+
+(function (global) {
+  'use strict';
+
+  /* ----------------------------------------------------------
+   *  1. 工具函数：字符串哈希 → 确定性32位整数
+   * ---------------------------------------------------------- */
+  function hashSeed(str) {
+    var hash = 0;
+    if (!str || str.length === 0) return hash;
+    for (var i = 0; i < str.length; i++) {
+      var ch = str.charCodeAt(i);
+      // FNV-1a 风格混合
+      hash = ((hash << 5) - hash) + ch;
+      hash = hash | 0; // 转32位整数
+    }
+    return Math.abs(hash);
+  }
+
+  /* ----------------------------------------------------------
+   *  2. 确定性伪随机数生成器（LCG）
+   *     给定种子，返回 [0, 1) 之间的浮点数
+   * ---------------------------------------------------------- */
+  function seededRandom(seed) {
+    // 使用 LCG 参数 (Numerical Recipes)
+    var s = seed | 0;
+    return function () {
+      s = (s * 1664525 + 1013904223) | 0;
+      return (s >>> 0) / 4294967296;
+    };
+  }
+
+  /* ----------------------------------------------------------
+   *  3. 十二卦象（考试 / 功名 / 学业）
+   * ---------------------------------------------------------- */
+  var HEXAGRAMS = [
+    {
+      id: 1,
+      name: '乾为天',
+      symbol: '\u4DC0',          // ䷀
+      judgment: '乾，元亨利贞。天行刚健，自强不息。',
+      meaning: '君子终日乾乾，夕惕若厉。学海无涯，以刚毅之心进德修业，功名必显。此卦主文运昌隆，科甲可期。'
+    },
+    {
+      id: 2,
+      name: '坤为地',
+      symbol: '\u4DC1',          // ䷁
+      judgment: '坤，元亨，利牝马之贞。厚德载物，含弘光大。',
+      meaning: '地势坤，君子以厚德载物。学问之道贵在积渐，博学笃志，切问近思。此卦主稳扎稳打，终成大器。'
+    },
+    {
+      id: 4,
+      name: '山水蒙',
+      symbol: '\u4DC3',          // ䷃
+      judgment: '蒙，亨。匪我求童蒙，童蒙求我。',
+      meaning: '山下出泉，蒙昧初开。君子以果行育德，启蒙发智。此卦主求学之始，宜虚心受教，尊师重道，智慧自开。'
+    },
+    {
+      id: 13,
+      name: '天火同人',
+      symbol: '\u4DCC',          // ䷌
+      judgment: '同人于野，亨。利涉大川，利君子贞。',
+      meaning: '天与火同，光明照远。君子以类族辨物，同志相聚。此卦主师友相助，文运亨通，与良朋共进，金榜题名。'
+    },
+    {
+      id: 35,
+      name: '火地晋',
+      symbol: '\u4DE2',          // ䷢
+      judgment: '晋，康侯用锡马蕃庶，昼日三接。',
+      meaning: '明出地上，晋进也。君子以自昭明德，日新其业。此卦主前程似锦，步步高升，考场之上如有神助。'
+    },
+    {
+      id: 55,
+      name: '雷火丰',
+      symbol: '\u4DF6',          // ䷶
+      judgment: '丰，亨。王假之，勿忧，宜日中。',
+      meaning: '雷电皆至，丰大之象。君子以折狱致刑，明察秋毫。此卦主学识丰盈，大获丰收，乃硕果累累之兆。'
+    },
+    {
+      id: 31,
+      name: '泽山咸',
+      symbol: '\u4DDE',          // ䷞
+      judgment: '咸，亨，利贞。取女吉。',
+      meaning: '山上有泽，感而遂通。君子以虚受人，灵台清明。此卦主灵感涌现，文思如泉涌，运笔之际天人感应。'
+    },
+    {
+      id: 63,
+      name: '水火既济',
+      symbol: '\u4DFE',          // ䷾
+      judgment: '既济，亨小，利贞。初吉终乱。',
+      meaning: '水在火上，事已成就。君子以思患而豫防之。此卦主功行圆满，考试大吉，然不可骄躁，慎终如始。'
+    },
+    {
+      id: 37,
+      name: '风火家人',
+      symbol: '\u4DE4',          // ䷤
+      judgment: '家人，利女贞。风自火出，言有物而行有恒。',
+      meaning: '风火相生，家道兴旺。君子以言有物而行有恒。此卦主家学渊源，书香门第，祖德荫庇，学业有成。'
+    },
+    {
+      id: 36,
+      name: '地火明夷',
+      symbol: '\u4DE3',          // ䷣
+      judgment: '明夷，利艰贞。明入地中，韬光养晦。',
+      meaning: '日入地中，明夷之象。君子以莅众，用晦而明。此卦主暂时困顿，宜潜心苦读，待时而动，终见光明。'
+    },
+    {
+      id: 3,
+      name: '水雷屯',
+      symbol: '\u4DC2',          // ䷂
+      judgment: '屯，元亨利贞。勿用有攸往，利建侯。',
+      meaning: '云雷屯聚，万物始生。君子以经纶天下，艰难困苦玉汝于成。此卦主初试不利，然破土而出之势已成，终将崛起。'
+    },
+    {
+      id: 16,
+      name: '雷地豫',
+      symbol: '\u4DCF',          // ䷏
+      judgment: '豫，利建侯行师。雷出地奋，悦以动。',
+      meaning: '雷出地上，豫悦之象。君子以作乐崇德，从容中道。此卦主心境安乐，以逸待劳，考场之上挥洒自如。'
+    }
+  ];
+
+  /* ----------------------------------------------------------
+   *  4. 命盘数据库
+   * ---------------------------------------------------------- */
+  var MAJORS = [
+    '计算机科学与技术', '人工智能', '数据科学与大数据',
+    '电子信息工程', '微电子科学与工程', '自动化',
+    '金融学', '经济学', '工商管理',
+    '法学', '知识产权', '社会学',
+    '临床医学', '药学', '生物医学工程',
+    '建筑学', '城乡规划', '土木工程',
+    '汉语言文学', '新闻传播学', '英语',
+    '数学与应用数学', '物理学', '化学',
+    '心理学', '教育学', '哲学',
+    '航空航天工程', '船舶与海洋工程', '核工程与核技术'
+  ];
+
+  var CITIES = [
+    '北京', '上海', '深圳', '杭州', '广州',
+    '成都', '南京', '武汉', '西安', '苏州',
+    '天津', '重庆', '长沙', '合肥', '青岛',
+    '厦门', '宁波', '大连', '郑州', '昆明'
+  ];
+
+  var CAREERS = [
+    '科研学者', '高级工程师', '产品经理', '金融分析师',
+    '数据科学家', '算法工程师', '大学教授', '技术总监',
+    '创业CEO', '投资银行家', '建筑设计师', 'AI研究员',
+    '知识产权律师', '医学专家', '战略咨询师',
+    '外交事务官', '首席技术官', '学术带头人'
+  ];
+
+  /* ----------------------------------------------------------
+   *  5. 核心预测函数
+   * ---------------------------------------------------------- */
+
+  /**
+   * 获取基于学号的确定性卦象
+   * @param {string} schoolSeed - 学号字符串
+   * @param {number} offset - 偏移量，用于生成不同的子随机
+   * @returns {object} 卦象对象
+   */
+  function getHexagramBySeed(schoolSeed, offset) {
+    if (offset === undefined) offset = 0;
+    var seed = hashSeed(schoolSeed + ':' + offset);
+    var rng = seededRandom(seed);
+    // 生成一个0-11的索引
+    var idx = Math.floor(rng() * 12);
+    // 再混入一些seed确定性的偏移，使分布更均匀
+    idx = (idx + Math.floor(seed / 7)) % 12;
+    return HEXAGRAMS[idx];
+  }
+
+  /**
+   * 获取确定性分数
+   * @param {string} schoolSeed - 学号
+   * @param {number} offset - 偏移
+   * @returns {number} 基础分 480-650
+   */
+  function getBaseScore(schoolSeed, offset) {
+    var seed = hashSeed(schoolSeed + ':score:' + offset);
+    var rng = seededRandom(seed);
+    // 基准分范围 480～650
+    return 480 + Math.floor(rng() * 171);
+  }
+
+  /**
+   * 获取波动范围（半宽）
+   */
+  function getSpread(schoolSeed, offset) {
+    var seed = hashSeed(schoolSeed + ':spread:' + offset);
+    var rng = seededRandom(seed);
+    // 波动半宽 15～35
+    return 15 + Math.floor(rng() * 21);
+  }
+
+  /**
+   * 模考预测
+   * @param {string} schoolSeed - 学号
+   * @returns {object} { hexagram, scoreRange, low, high, baseScore }
+   */
+  function predictMockScore(schoolSeed) {
+    var base = getBaseScore(schoolSeed, 100);
+    var spread = getSpread(schoolSeed, 200);
+    var low = base - spread;
+    var high = base + spread;
+    var hexagram = getHexagramBySeed(schoolSeed, 300);
+
+    // 确保边界合理
+    if (low < 300) low = 300;
+    if (high > 750) high = 750;
+    if (low >= high) high = low + 20;
+
+    return {
+      hexagram: hexagram,
+      scoreRange: low + '-' + high,
+      low: low,
+      high: high,
+      baseScore: base
+    };
+  }
+
+  /**
+   * 高考预测（比模考略高 5～40 分）
+   * @param {string} schoolSeed - 学号
+   * @returns {object} { hexagram, scoreRange, low, high, boost, mockRange }
+   */
+  function predictGaokaoScore(schoolSeed) {
+    var mock = predictMockScore(schoolSeed);
+
+    // 高考提升幅度 5～40
+    var seed = hashSeed(schoolSeed + ':gaokao_boost');
+    var rng = seededRandom(seed);
+    var boost = 5 + Math.floor(rng() * 36);
+
+    // 高考分数区间以模考为基础向上偏移
+    var gaokaoLow = mock.low + boost;
+    var gaokaoHigh = mock.high + boost + Math.floor((rng() * 10)); // 再加一点不确定性
+
+    // 高考上限不超过750
+    if (gaokaoHigh > 750) {
+      gaokaoHigh = 750;
+      gaokaoLow = Math.min(gaokaoLow, gaokaoHigh - 15);
+    }
+    if (gaokaoLow < 300) gaokaoLow = 300;
+
+    // 高考关联不同卦（用不同偏移）
+    var hexagram = getHexagramBySeed(schoolSeed, 500);
+
+    return {
+      hexagram: hexagram,
+      scoreRange: gaokaoLow + '-' + gaokaoHigh,
+      low: gaokaoLow,
+      high: gaokaoHigh,
+      boost: boost,
+      mockRange: mock.scoreRange
+    };
+  }
+
+  /**
+   * 命盘解读
+   * @param {string} schoolSeed - 学号
+   * @returns {object} { majors: [], cities: [], careerTraits: [] }
+   */
+  function getDestinyReading(schoolSeed) {
+    var seed = hashSeed(schoolSeed + ':destiny');
+    var rng = seededRandom(seed);
+
+    // 选2～3个专业
+    var majorCount = 2 + Math.floor(rng() * 2); // 2 或 3
+    var majors = [];
+    var usedMajorIdx = {};
+    while (majors.length < majorCount) {
+      var idx = Math.floor(rng() * MAJORS.length);
+      if (!usedMajorIdx[idx]) {
+        usedMajorIdx[idx] = true;
+        majors.push(MAJORS[idx]);
+      }
+    }
+
+    // 选1～2个城市
+    var cityCount = 1 + Math.floor(rng() * 2);
+    var cities = [];
+    var usedCityIdx = {};
+    while (cities.length < cityCount) {
+      var ci = Math.floor(rng() * CITIES.length);
+      if (!usedCityIdx[ci]) {
+        usedCityIdx[ci] = true;
+        cities.push(CITIES[ci]);
+      }
+    }
+
+    // 选1～2个职业方向
+    var careerCount = 1 + Math.floor(rng() * 2);
+    var careers = [];
+    var usedCareerIdx = {};
+    while (careers.length < careerCount) {
+      var cj = Math.floor(rng() * CAREERS.length);
+      if (!usedCareerIdx[cj]) {
+        usedCareerIdx[cj] = true;
+        careers.push(CAREERS[cj]);
+      }
+    }
+
+    return {
+      majors: majors,
+      cities: cities,
+      careerTraits: careers
+    };
+  }
+
+  /* ----------------------------------------------------------
+   *  6. 导出 API
+   * ---------------------------------------------------------- */
+  var GaoYiDivination = {
+    VERSION: '1.0.0',
+    HEXAGRAMS: HEXAGRAMS,
+    predictMockScore: predictMockScore,
+    predictGaokaoScore: predictGaokaoScore,
+    getDestinyReading: getDestinyReading,
+    // 底层工具（调试用）
+    _hash: hashSeed,
+    _seededRandom: seededRandom
+  };
+
+  // AMD / CommonJS / 全局 三模式导出
+  if (typeof define === 'function' && define.amd) {
+    define([], function () { return GaoYiDivination; });
+  } else if (typeof module !== 'undefined' && module.exports) {
+    module.exports = GaoYiDivination;
+  } else {
+    global.GaoYiDivination = GaoYiDivination;
+  }
+
+})(typeof window !== 'undefined' ? window : global);
+
+
+// ===== 应用状态 =====
+var appState = {
+  school: '',
+  studentId: '',
+  mockResult: null,
+  gaokaoResult: null,
+  destinyReading: null
+};
+
+// ===== 页面切换 =====
+function pageShow(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== 启卦 =====
+function startDivination() {
+  var school = document.getElementById('schoolSelect').value;
+  var studentId = document.getElementById('studentId').value.trim();
+
+  if (!school) { alert('请选择你的学校'); return; }
+  if (!studentId) { alert('请输入学号/准考证号'); return; }
+
+  appState.school = school;
+  appState.studentId = studentId;
+  appState.mockResult = GaoYiDivination.predictMockScore(studentId + school);
+  appState.gaokaoResult = GaoYiDivination.predictGaokaoScore(studentId + school);
+  appState.destinyReading = GaoYiDivination.getDestinyReading(studentId + school);
+
+  renderMockPage();
+  pageShow('page-mock');
+}
+
+// ===== 渲染先验页 =====
+function renderMockPage() {
+  var r = appState.mockResult;
+  if (!r) return;
+  document.querySelector('#page-mock .hexagram-symbol').textContent = r.hexagram.symbol;
+  document.querySelector('#page-mock .hexagram-name').textContent = r.hexagram.name;
+  document.querySelector('#page-mock .hexagram-sub').textContent = '卦象 · ' + r.hexagram.name;
+  document.querySelector('#page-mock .prediction-result .highlight').innerHTML = '【' + r.low + ' — ' + r.high + '】';
+  document.querySelector('#page-mock .oracle-text').innerHTML =
+    '<strong>卦辞：</strong>' + r.hexagram.judgment + '<br>' +
+    '<strong>象曰：</strong>' + r.hexagram.meaning + '<br><br>' +
+    '此卦主学业精进，文运昌隆。诚心叩问，卦不虚应。';
+}
+
+// ===== 渲染分享页 =====
+function renderSharePage() {
+  var r = appState.mockResult;
+  if (!r) return;
+  drawShareCard(r);
+  pageShow('page-share');
+}
+
+// ===== 渲染高考预测页 =====
+function renderGaokaoPage() {
+  var r = appState.gaokaoResult;
+  if (!r) return;
+  document.querySelector('#page-gaokao .hexagram-symbol').textContent = r.hexagram.symbol;
+  document.querySelector('#page-gaokao .hexagram-name').textContent = r.hexagram.name;
+  document.querySelector('#page-gaokao .hexagram-sub').textContent = '卦象 · ' + r.hexagram.name;
+  document.querySelector('#page-gaokao .prediction-result .highlight').innerHTML = '【' + r.low + ' — ' + r.high + '】';
+
+  var detailedJudgment =
+    '<strong>卦辞：</strong>' + r.hexagram.judgment + '<br>' +
+    '<strong>象曰：</strong>' + r.hexagram.meaning + '<br><br>' +
+    '<strong>推演：</strong>以模考区间 ' + r.mockRange + ' 为基，卦象显示尚有 ' + r.boost + ' 分提升之势。<br>' +
+    '水火相济，文理兼融。临考守心，慎终如始，此乃大成之象。';
+
+  document.querySelector('#page-gaokao .oracle-text').innerHTML = detailedJudgment;
+  pageShow('page-gaokao');
+}
+
+// ===== 渲染命盘页 =====
+function renderDestinyPage() {
+  var d = appState.destinyReading;
+  if (!d) return;
+
+  var cards = document.querySelectorAll('#page-destiny .destiny-card');
+  // Card 1: majors
+  cards[0].querySelector('.card-value').innerHTML = d.majors.map(function(m) {
+    return '<span class="tag">' + m + '</span>';
+  }).join(' ');
+  // Card 2: cities
+  cards[1].querySelector('.card-value').innerHTML = d.cities.map(function(c) {
+    return '<span class="tag">' + c + '</span>';
+  }).join(' ');
+  // Card 3: careers
+  cards[2].querySelector('.card-value').innerHTML = d.careerTraits.map(function(ct) {
+    return '<span class="tag">' + ct + '</span>';
+  }).join(' ');
+
+  pageShow('page-destiny');
+}
+
+// ===== 分享功能 =====
+function copyShareText() {
+  var r = appState.mockResult;
+  if (!r) return;
+  var text = '密心Ai用高岛易断卦象推演，猜中了我的模考成绩【' + r.scoreRange + '】！🔮 来试试你的高考运势？';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).catch(function() { fallbackCopy(text); });
+  } else {
+    fallbackCopy(text);
+  }
+  var el = document.getElementById('copyArea');
+  el.classList.add('copied');
+  setTimeout(function() { el.classList.remove('copied'); }, 1800);
+}
+
+function fallbackCopy(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+}
+
+// ===== Canvas 分享卡片绘制 =====
+function drawShareCard(result) {
+  var canvas = document.getElementById('shareCanvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var w = 320, h = 480;
+
+  // Background gradient
+  var grad = ctx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, '#1a1a2e');
+  grad.addColorStop(0.5, '#0d0d1a');
+  grad.addColorStop(1, '#1a1a2e');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+
+  // Border glow
+  ctx.strokeStyle = 'rgba(201, 169, 78, 0.3)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(6, 6, w - 12, h - 12);
+
+  // Hexagram symbol
+  ctx.fillStyle = '#c9a94e';
+  ctx.font = '52px serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.shadowColor = 'rgba(201, 169, 78, 0.25)';
+  ctx.shadowBlur = 20;
+  ctx.fillText(result.hexagram.symbol, w / 2, 90);
+  ctx.shadowBlur = 0;
+
+  // Hexagram name
+  ctx.font = 'bold 22px "Noto Serif SC", "SimSun", serif';
+  ctx.fillStyle = '#c9a94e';
+  ctx.shadowBlur = 8;
+  ctx.shadowColor = 'rgba(201, 169, 78, 0.15)';
+  ctx.fillText(result.hexagram.name, w / 2, 150);
+  ctx.shadowBlur = 0;
+
+  // Divider
+  ctx.strokeStyle = 'rgba(201, 169, 78, 0.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(60, 180);
+  ctx.lineTo(260, 180);
+  ctx.stroke();
+
+  // Prediction text
+  ctx.fillStyle = 'rgba(224, 213, 192, 0.7)';
+  ctx.font = '13px "Noto Serif SC", "SimSun", serif';
+  ctx.fillText('密心Ai · 模拟考成绩预测', w / 2, 215);
+
+  ctx.fillStyle = '#c9a94e';
+  ctx.font = 'bold 28px "Noto Serif SC", "SimSun", serif';
+  ctx.shadowBlur = 12;
+  ctx.shadowColor = 'rgba(201, 169, 78, 0.2)';
+  ctx.fillText(result.low + ' — ' + result.high, w / 2, 265);
+  ctx.shadowBlur = 0;
+
+  // Divider 2
+  ctx.strokeStyle = 'rgba(201, 169, 78, 0.15)';
+  ctx.beginPath();
+  ctx.moveTo(60, 295);
+  ctx.lineTo(260, 295);
+  ctx.stroke();
+
+  // CTA text
+  ctx.fillStyle = 'rgba(201, 169, 78, 0.5)';
+  ctx.font = '13px "Noto Serif SC", "SimSun", serif';
+  ctx.fillText('来试试你的高考运势？', w / 2, 335);
+
+  // School info
+  ctx.fillStyle = 'rgba(224, 213, 192, 0.3)';
+  ctx.font = '11px "Noto Serif SC", "SimSun", serif';
+  ctx.fillText(appState.school, w / 2, 375);
+
+  // Bottom brand
+  ctx.fillStyle = 'rgba(201, 169, 78, 0.2)';
+  ctx.font = '11px "Noto Serif SC", "SimSun", serif';
+  ctx.fillText('密心Ai · 高考天机预测站', w / 2, 440);
+
+  // Decorative dots
+  for (var i = 0; i < 15; i++) {
+    ctx.fillStyle = 'rgba(201, 169, 78, ' + (0.02 + Math.random() * 0.05) + ')';
+    ctx.beginPath();
+    ctx.arc(15 + Math.random() * 290, 15 + Math.random() * 450, 1.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Update copy text
+  document.getElementById('copyArea').childNodes[1].textContent =
+    '密心Ai用高岛易断卦象推演，猜中了我的模考成绩【' + result.scoreRange + '】！🔮 来试试你的高考运势？';
+}
+
+// ===== 初始化 =====
+window.addEventListener('DOMContentLoaded', function() {
+  // Remove the "再测一次" from mock page - it should go back to welcome
+  // Update the mock page buttons
+  var mockBtns = document.querySelectorAll('#page-mock .btn-row .btn');
+  mockBtns[0].setAttribute('onclick', 'renderSharePage()');
+  mockBtns[1].setAttribute('onclick', 'pageShow(\'page-welcome\')');
+  mockBtns[1].textContent = '↻ 重新启卦';
+
+  // Update welcome button
+  document.querySelector('#page-welcome .btn-full').setAttribute('onclick', 'startDivination()');
+
+  // Update share page buttons
+  var shareBtns = document.querySelectorAll('#page-share .btn-row .btn');
+  shareBtns[0].setAttribute('onclick', 'copyShareText()');
+  shareBtns[1].setAttribute('onclick', 'renderGaokaoPage()');
+
+  // Update gaokao entry link
+  document.querySelector('#page-gaokao .entry-link').setAttribute('onclick', 'renderDestinyPage()');
+});
+</script>
+
+</body>
+</html>

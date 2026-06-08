@@ -119,6 +119,16 @@ h1 {
   color: #4CAF50;
   border: 1px solid rgba(76,175,80,0.3);
 }
+.badge-hot {
+  background: rgba(255,69,0,0.2);
+  color: #FF4500;
+  border: 1px solid rgba(255,69,0,0.4);
+  animation: hotPulse 2s ease-in-out infinite;
+}
+@keyframes hotPulse {
+  0%, 100% { box-shadow: 0 0 5px rgba(255,69,0,0.2); }
+  50% { box-shadow: 0 0 15px rgba(255,69,0,0.5); }
+}
 .card-icon {
   font-size: 2rem;
   margin-bottom: 12px;
@@ -202,6 +212,22 @@ h1 {
   </div>
 
   <div class="skills-grid">
+    <!-- Skill 0: Gaokao Prediction (HOT!) -->
+    <a href="./skills/gaokao-prediction/" class="skill-card">
+      <span class="card-badge badge-hot"><i class="fa-solid fa-fire"></i> 🔥 热点新上线</span>
+      <div class="card-icon">🎋</div>
+      <div class="card-title">高考天机预测站</div>
+      <div class="card-desc">
+        输入学校和学号——密心先用"高岛易断"古法卦象为你预测模考成绩。<br>
+        猜对了？再长按分享朋友圈——免费解锁「高考成绩天机预测」！<br>
+        先验后验两步法，不暴露具体成绩，只展示卦象与钩子文案。
+      </div>
+      <div class="card-meta">
+        <span><i class="fa-solid fa-file"></i> 纯前端 · 即开即用</span>
+        <span><i class="fa-regular fa-clock"></i> 2步预测 · 社交裂变</span>
+      </div>
+    </a>
+
     <!-- Skill 1: Exam Fortune -->
     <a href="./skills/exam-fortune/" class="skill-card">
       <span class="card-badge badge-ready"><i class="fa-solid fa-bolt"></i> 在线可用</span>
